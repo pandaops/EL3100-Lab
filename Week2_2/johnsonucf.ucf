@@ -1,0 +1,7 @@
+NET "rst" LOC = "H18";  
+NET "clk" LOC = "C9";  
+
+NET "q0" LOC = "F12";
+NET "q1" LOC = "E12";
+NET "q2" LOC = "E11";
+NET "q3" LOC = "F11";
