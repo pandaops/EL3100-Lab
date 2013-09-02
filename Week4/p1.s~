@@ -1,0 +1,17 @@
+.section .l1.data
+.align 4
+out: .byte4 0;
+aa: .byte4 9;
+bb: .byte4 10;
+.section .text
+.global _main;
+_main:
+p0=[p3+out@GOT17M4];
+p1=[p3+aa@GOT17M4];
+p2=[p3+bb@GOT17M4];
+r3=[p1];
+r4=[p2];
+r5=r3+r4;
+[p0]=r5;
+nop;
+_main.end:
