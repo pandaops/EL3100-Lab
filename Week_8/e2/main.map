@@ -1,0 +1,283 @@
+
+Discarded input sections
+
+ .text          0x00000000        0x0 Startup.o
+ .data          0x00000000        0x0 Startup.o
+ .bss           0x00000000        0x0 Startup.o
+ .text          0x00000000        0x0 swi_handler.o
+ .data          0x00000000        0x0 swi_handler.o
+ .bss           0x00000000        0x0 swi_handler.o
+ .text          0x00000000        0x0 main.o
+ .data          0x00000000        0x0 main.o
+ .bss           0x00000000        0x0 main.o
+ .text          0x00000000        0x0 timer.o
+ .data          0x00000000        0x0 timer.o
+ .bss           0x00000000        0x0 timer.o
+ .text.enable_timer
+                0x00000000        0x0 timer.o
+ .text.disable_timer
+                0x00000000        0x0 timer.o
+ .text.reset_timer
+                0x00000000        0x0 timer.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+ROM              0x00000000         0x0007f000         xr
+RAM              0x40000000         0x00007fe0         rw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD Startup.o
+LOAD swi_handler.o
+LOAD main.o
+LOAD timer.o
+LOAD /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a
+LOAD /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libm.a
+LOAD /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a
+LOAD /usr/lib/gcc/arm-elf/4.2.0/thumb/interwork/libgcc.a
+START GROUP
+LOAD /usr/lib/gcc/arm-elf/4.2.0/thumb/interwork/libgcc.a
+LOAD /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libg.a
+LOAD /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a
+END GROUP
+
+.text           0x00000000      0x500
+ *(.vectorg)
+ *(.RESET)
+ .RESET         0x00000000      0x164 Startup.o
+ *(.SWI_HANDLER)
+ .SWI_HANDLER   0x00000164       0x74 swi_handler.o
+                0x00000164                SoftwareInterrupt
+                0x000001d0                IntDisable
+                0x000001c8                IntEnable
+                0x000001d8                . = ALIGN (0x4)
+ *(.init)
+ *(.text .text.*)
+ .text.TargetResetInit
+                0x000001d8      0x13c main.o
+                0x000001d8                TargetResetInit
+ .text.delay    0x00000314       0x44 main.o
+ .text.main     0x00000358       0x74 main.o
+                0x00000358                main
+ .text.install_irq
+                0x000003cc       0xac timer.o
+                0x000003cc                install_irq
+ .text.Timer0Handler
+                0x00000478       0x30 timer.o
+                0x00000478                Timer0Handler
+ .text.init_timer
+                0x000004a8       0x58 timer.o
+                0x000004a8                init_timer
+ *(.gnu.linkonce.t.*)
+ *(.glue_7)
+ .glue_7        0x00000500        0x0 Startup.o
+ .glue_7        0x00000500        0x0 swi_handler.o
+ .glue_7        0x00000500        0x0 main.o
+ .glue_7        0x00000500        0x0 timer.o
+ *(.glue_7t)
+ .glue_7t       0x00000500        0x0 Startup.o
+ .glue_7t       0x00000500        0x0 swi_handler.o
+ .glue_7t       0x00000500        0x0 main.o
+ .glue_7t       0x00000500        0x0 timer.o
+ *(.gcc_except_table)
+ *(.rodata)
+ *(.rodata*)
+ *(.gnu.linkonce.r.*)
+                0x00000500                . = ALIGN (0x4)
+                0x00000500                . = ALIGN (0x4)
+
+.ctors          0x00000500        0x0
+                0x00000500                PROVIDE (__ctors_start__, .)
+ *(SORT(.ctors.*))
+ *(.ctors)
+                0x00000500                . = ALIGN (0x4)
+                0x00000500                PROVIDE (__ctors_end__, .)
+                0x00000500                . = ALIGN (0x4)
+
+.dtors          0x00000500        0x0
+                0x00000500                PROVIDE (__dtors_start__, .)
+ *(SORT(.dtors.*))
+ *(.dtors)
+                0x00000500                . = ALIGN (0x4)
+                0x00000500                PROVIDE (__dtors_end__, .)
+                0x00000500                . = ALIGN (0x4)
+                0x00000500                . = ALIGN (0x4)
+                0x00000500                _etext = .
+                0x00000500                PROVIDE (etext, .)
+
+.data           0x40000000        0x0 load address 0x00000500
+                0x40000000                _data = .
+ *(.vectmapped)
+                0x40000000                . = ALIGN (0x4)
+ *(.fastrun)
+                0x40000000                . = ALIGN (0x4)
+                0x40000000                . = ALIGN (0x4)
+ *(.data)
+ *(.data.*)
+ *(.gnu.linkonce.d*)
+                0x40000000                . = ALIGN (0x4)
+                0x40000000                . = ALIGN (0x4)
+                0x40000000                _edata = .
+                0x40000000                PROVIDE (edata, .)
+
+.bss            0x40000000        0x4
+                0x40000000                __bss_start = .
+                0x40000000                __bss_start__ = .
+ *(.bss)
+ *(.bss.*)
+ .bss.timer_counter
+                0x40000000        0x4 timer.o
+                0x40000000                timer_counter
+ *(.gnu.linkonce.b*)
+ *(COMMON)
+                0x40000004                . = ALIGN (0x4)
+                0x40000004                . = ALIGN (0x4)
+                0x40000004                __bss_end__ = .
+                0x40000004                PROVIDE (__bss_end, .)
+
+.stack          0x40000100      0x400
+ *(.stack)
+ *(.STACK)
+ .STACK         0x40000100      0x400 Startup.o
+                0x40000500                PROVIDE (_stack, .)
+                0x40000500                . = ALIGN (0x4)
+                0x40000500                _end = .
+                0x40000500                PROVIDE (end, .)
+
+.heap           0x40000500        0x0
+ *(.HEAP)
+ .HEAP          0x40000500        0x0 Startup.o
+                0x40000500                . = ALIGN (0x4)
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment        0x00000000       0x86
+ *(.comment)
+ .comment       0x00000000       0x43 main.o
+ .comment       0x00000043       0x43 timer.o
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x00000000       0xc8
+ *(.debug_aranges)
+ .debug_aranges
+                0x00000000       0x20 Startup.o
+ .debug_aranges
+                0x00000020       0x20 swi_handler.o
+ .debug_aranges
+                0x00000040       0x38 main.o
+ .debug_aranges
+                0x00000078       0x50 timer.o
+
+.debug_pubnames
+                0x00000000       0xb7
+ *(.debug_pubnames)
+ .debug_pubnames
+                0x00000000       0x2f main.o
+ .debug_pubnames
+                0x0000002f       0x88 timer.o
+
+.debug_info     0x00000000      0x41f
+ *(.debug_info .gnu.linkonce.wi.*)
+ .debug_info    0x00000000       0x59 Startup.o
+ .debug_info    0x00000059       0x5d swi_handler.o
+ .debug_info    0x000000b6      0x122 main.o
+ .debug_info    0x000001d8      0x247 timer.o
+
+.debug_abbrev   0x00000000      0x155
+ *(.debug_abbrev)
+ .debug_abbrev  0x00000000       0x14 Startup.o
+ .debug_abbrev  0x00000014       0x14 swi_handler.o
+ .debug_abbrev  0x00000028       0x76 main.o
+ .debug_abbrev  0x0000009e       0xb7 timer.o
+
+.debug_line     0x00000000      0x216
+ *(.debug_line)
+ .debug_line    0x00000000       0x8a Startup.o
+ .debug_line    0x0000008a       0x5b swi_handler.o
+ .debug_line    0x000000e5       0x85 main.o
+ .debug_line    0x0000016a       0xac timer.o
+
+.debug_frame    0x00000000      0x138
+ *(.debug_frame)
+ .debug_frame   0x00000000       0x6c main.o
+ .debug_frame   0x0000006c       0xcc timer.o
+
+.debug_str      0x00000000        0xa
+ *(.debug_str)
+ .debug_str     0x00000000        0xa timer.o
+
+.debug_loc      0x00000000      0x1d5
+ *(.debug_loc)
+ .debug_loc     0x00000000       0x98 main.o
+ .debug_loc     0x00000098      0x13d timer.o
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+OUTPUT(main.elf elf32-littlearm)
+
+Cross Reference Table
+
+Symbol                                            File
+IntDisable                                        swi_handler.o
+IntEnable                                         swi_handler.o
+Reset_handler                                     Startup.o
+SoftwareInterrupt                                 swi_handler.o
+                                                  Startup.o
+TargetResetInit                                   main.o
+                                                  Startup.o
+Timer0Handler                                     timer.o
+__bss_end__                                       Startup.o
+__bss_start__                                     Startup.o
+_data                                             Startup.o
+_edata                                            Startup.o
+_etext                                            Startup.o
+disable_timer                                     timer.o
+enable_timer                                      timer.o
+init_timer                                        timer.o
+                                                  main.o
+install_irq                                       timer.o
+main                                              main.o
+                                                  Startup.o
+reset_timer                                       timer.o
+timer_counter                                     timer.o

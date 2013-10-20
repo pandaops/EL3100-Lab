@@ -1,0 +1,709 @@
+   1              		.code	16
+   2              		.file	"main.c"
+  10              	.Ltext0:
+  11              		.section	.text.delay,"ax",%progbits
+  12              		.align	2
+  13              		.global	delay
+  14              		.code 16
+  15              		.thumb_func
+  17              	delay:
+  18              	.LFB2:
+  19              		.file 1 "main.c"
+   1:main.c        **** #include "LPC23xx.h"
+   2:main.c        **** void delay(void)
+   3:main.c        **** {
+  20              		.loc 1 3 0
+  21 0000 80B5     		push	{r7, lr}
+  22              	.LCFI0:
+  23 0002 82B0     		sub	sp, sp, #8
+  24              	.LCFI1:
+  25 0004 00AF     		add	r7, sp, #0
+  26              	.LCFI2:
+  27              	.LBB2:
+   4:main.c        **** 	for(int i=0;i<0x7f;i++)
+  28              		.loc 1 4 0
+  29 0006 3A1C     		mov	r2, r7
+  30 0008 0023     		mov	r3, #0
+  31 000a 1360     		str	r3, [r2]
+  32 000c 11E0     		b	.L2
+  33              	.L3:
+  34              	.LBB3:
+   5:main.c        **** 	for(int j=0;j<0xff;j++);
+  35              		.loc 1 5 0
+  36 000e 3A1D     		add	r2, r7, #4
+  37 0010 0023     		mov	r3, #0
+  38 0012 1360     		str	r3, [r2]
+  39 0014 04E0     		b	.L4
+  40              	.L5:
+  41 0016 3A1D     		add	r2, r7, #4
+  42 0018 3B1D     		add	r3, r7, #4
+  43 001a 1B68     		ldr	r3, [r3]
+  44 001c 0133     		add	r3, r3, #1
+  45 001e 1360     		str	r3, [r2]
+  46              	.L4:
+  47 0020 3B1D     		add	r3, r7, #4
+  48 0022 1B68     		ldr	r3, [r3]
+  49 0024 FE2B     		cmp	r3, #254
+  50 0026 F6DD     		ble	.L5
+  51              	.LBE3:
+  52              		.loc 1 4 0
+  53 0028 3A1C     		mov	r2, r7
+  54 002a 3B1C     		mov	r3, r7
+  55 002c 1B68     		ldr	r3, [r3]
+  56 002e 0133     		add	r3, r3, #1
+  57 0030 1360     		str	r3, [r2]
+  58              	.L2:
+  59 0032 3B1C     		mov	r3, r7
+  60 0034 1B68     		ldr	r3, [r3]
+  61 0036 7E2B     		cmp	r3, #126
+  62 0038 E9DD     		ble	.L3
+  63              	.LBE2:
+   6:main.c        **** }
+  64              		.loc 1 6 0
+  65 003a BD46     		mov	sp, r7
+  66 003c 02B0     		add	sp, sp, #8
+  67              		@ sp needed for prologue
+  68 003e 80BC     		pop	{r7}
+  69 0040 01BC     		pop	{r0}
+  70 0042 0047     		bx	r0
+  71              	.LFE2:
+  73              		.section	.text.key_routine,"ax",%progbits
+  74              		.align	2
+  75              		.global	key_routine
+  76              		.code 16
+  77              		.thumb_func
+  79              	key_routine:
+  80              	.LFB3:
+   7:main.c        **** void key_routine(void)
+   8:main.c        ****  {
+  81              		.loc 1 8 0
+  82 0000 80B5     		push	{r7, lr}
+  83              	.LCFI3:
+  84 0002 81B0     		sub	sp, sp, #4
+  85              	.LCFI4:
+  86 0004 00AF     		add	r7, sp, #0
+  87              	.LCFI5:
+   9:main.c        ****     unsigned int key;
+  10:main.c        ****     FIO3DIR  = 0X008000FF;
+  88              		.loc 1 10 0
+  89 0006 824A     		ldr	r2, .L44
+  90 0008 824B     		ldr	r3, .L44+4
+  91 000a 1360     		str	r3, [r2]
+  11:main.c        ****     PINSEL0 |=0X00000000;
+  92              		.loc 1 11 0
+  93 000c 824A     		ldr	r2, .L44+8
+  94 000e 824B     		ldr	r3, .L44+8
+  95 0010 1B68     		ldr	r3, [r3]
+  96 0012 1360     		str	r3, [r2]
+  12:main.c        ****     IODIR0  |=0X00000000;
+  97              		.loc 1 12 0
+  98 0014 814A     		ldr	r2, .L44+12
+  99 0016 814B     		ldr	r3, .L44+12
+ 100 0018 1B68     		ldr	r3, [r3]
+ 101 001a 1360     		str	r3, [r2]
+ 102              	.L10:
+  13:main.c        ****     while(1)
+  14:main.c        ****     {
+  15:main.c        ****  	  //First Row      
+  16:main.c        **** 	      FIO4SET = 0X00000e00;
+ 103              		.loc 1 16 0
+ 104 001c 804A     		ldr	r2, .L44+16
+ 105 001e E023     		mov	r3, #224
+ 106 0020 1B01     		lsl	r3, r3, #4
+ 107 0022 1360     		str	r3, [r2]
+  17:main.c        **** 	      key = FIO4PIN;
+ 108              		.loc 1 17 0
+ 109 0024 7F4B     		ldr	r3, .L44+20
+ 110 0026 3A1C     		mov	r2, r7
+ 111 0028 1B68     		ldr	r3, [r3]
+ 112 002a 1360     		str	r3, [r2]
+  18:main.c        **** 	      key = (key & 0xf000) >> 12 ;
+ 113              		.loc 1 18 0
+ 114 002c 3B1C     		mov	r3, r7
+ 115 002e 1A68     		ldr	r2, [r3]
+ 116 0030 F023     		mov	r3, #240
+ 117 0032 1B02     		lsl	r3, r3, #8
+ 118 0034 1340     		and	r3, r3, r2
+ 119 0036 3A1C     		mov	r2, r7
+ 120 0038 1B0B     		lsr	r3, r3, #12
+ 121 003a 1360     		str	r3, [r2]
+  19:main.c        ****       
+  20:main.c        ****               if((key==0x07))
+ 122              		.loc 1 20 0
+ 123 003c 3B1C     		mov	r3, r7
+ 124 003e 1B68     		ldr	r3, [r3]
+ 125 0040 072B     		cmp	r3, #7
+ 126 0042 05D1     		bne	.L11
+  21:main.c        **** 	      {
+  22:main.c        ****         	  send_serial_data('0');
+ 127              		.loc 1 22 0
+ 128 0044 3020     		mov	r0, #48
+ 129 0046 FFF7FEFF 		bl	send_serial_data
+  23:main.c        **** 		  FIO3PIN = 0X00000000;
+ 130              		.loc 1 23 0
+ 131 004a 774A     		ldr	r2, .L44+24
+ 132 004c 0023     		mov	r3, #0
+ 133 004e 1360     		str	r3, [r2]
+ 134              	.L11:
+  24:main.c        **** 	      }
+  25:main.c        **** 	      if((key==0x0b))
+ 135              		.loc 1 25 0
+ 136 0050 3B1C     		mov	r3, r7
+ 137 0052 1B68     		ldr	r3, [r3]
+ 138 0054 0B2B     		cmp	r3, #11
+ 139 0056 05D1     		bne	.L13
+  26:main.c        ****               {
+  27:main.c        **** 		  send_serial_data('1');
+ 140              		.loc 1 27 0
+ 141 0058 3120     		mov	r0, #49
+ 142 005a FFF7FEFF 		bl	send_serial_data
+  28:main.c        **** 		  FIO3PIN = 0X00000001;
+ 143              		.loc 1 28 0
+ 144 005e 724A     		ldr	r2, .L44+24
+ 145 0060 0123     		mov	r3, #1
+ 146 0062 1360     		str	r3, [r2]
+ 147              	.L13:
+  29:main.c        **** 	      }
+  30:main.c        **** 	      if( (key==0x0d))
+ 148              		.loc 1 30 0
+ 149 0064 3B1C     		mov	r3, r7
+ 150 0066 1B68     		ldr	r3, [r3]
+ 151 0068 0D2B     		cmp	r3, #13
+ 152 006a 05D1     		bne	.L15
+  31:main.c        ****               {
+  32:main.c        **** 	          send_serial_data('2');
+ 153              		.loc 1 32 0
+ 154 006c 3220     		mov	r0, #50
+ 155 006e FFF7FEFF 		bl	send_serial_data
+  33:main.c        **** 	          FIO3PIN = 0X00000002;
+ 156              		.loc 1 33 0
+ 157 0072 6D4A     		ldr	r2, .L44+24
+ 158 0074 0223     		mov	r3, #2
+ 159 0076 1360     		str	r3, [r2]
+ 160              	.L15:
+  34:main.c        ****               }
+  35:main.c        **** 	      if((key==0x0e))
+ 161              		.loc 1 35 0
+ 162 0078 3B1C     		mov	r3, r7
+ 163 007a 1B68     		ldr	r3, [r3]
+ 164 007c 0E2B     		cmp	r3, #14
+ 165 007e 05D1     		bne	.L17
+  36:main.c        **** 	      {
+  37:main.c        **** 		  send_serial_data('3');
+ 166              		.loc 1 37 0
+ 167 0080 3320     		mov	r0, #51
+ 168 0082 FFF7FEFF 		bl	send_serial_data
+  38:main.c        **** 	          FIO3PIN = 0X00000003;
+ 169              		.loc 1 38 0
+ 170 0086 684A     		ldr	r2, .L44+24
+ 171 0088 0323     		mov	r3, #3
+ 172 008a 1360     		str	r3, [r2]
+ 173              	.L17:
+  39:main.c        ****               }
+  40:main.c        ****               FIO4CLR = 0X00000e00;
+ 174              		.loc 1 40 0
+ 175 008c 674A     		ldr	r2, .L44+28
+ 176 008e E023     		mov	r3, #224
+ 177 0090 1B01     		lsl	r3, r3, #4
+ 178 0092 1360     		str	r3, [r2]
+  41:main.c        **** 	      delay();
+ 179              		.loc 1 41 0
+ 180 0094 FFF7FEFF 		bl	delay
+  42:main.c        **** 	  //Second Row     
+  43:main.c        **** 	      FIO4SET = 0X00000d00;
+ 181              		.loc 1 43 0
+ 182 0098 614A     		ldr	r2, .L44+16
+ 183 009a D023     		mov	r3, #208
+ 184 009c 1B01     		lsl	r3, r3, #4
+ 185 009e 1360     		str	r3, [r2]
+  44:main.c        **** 	      key = FIO4PIN;
+ 186              		.loc 1 44 0
+ 187 00a0 604B     		ldr	r3, .L44+20
+ 188 00a2 3A1C     		mov	r2, r7
+ 189 00a4 1B68     		ldr	r3, [r3]
+ 190 00a6 1360     		str	r3, [r2]
+  45:main.c        **** 	      key = (key & 0xf000) >> 12 ;
+ 191              		.loc 1 45 0
+ 192 00a8 3B1C     		mov	r3, r7
+ 193 00aa 1A68     		ldr	r2, [r3]
+ 194 00ac F023     		mov	r3, #240
+ 195 00ae 1B02     		lsl	r3, r3, #8
+ 196 00b0 1340     		and	r3, r3, r2
+ 197 00b2 3A1C     		mov	r2, r7
+ 198 00b4 1B0B     		lsr	r3, r3, #12
+ 199 00b6 1360     		str	r3, [r2]
+  46:main.c        ****       
+  47:main.c        ****       
+  48:main.c        **** 	      if((key==0x07))
+ 200              		.loc 1 48 0
+ 201 00b8 3B1C     		mov	r3, r7
+ 202 00ba 1B68     		ldr	r3, [r3]
+ 203 00bc 072B     		cmp	r3, #7
+ 204 00be 05D1     		bne	.L19
+  49:main.c        ****               {
+  50:main.c        **** 	          send_serial_data('4');
+ 205              		.loc 1 50 0
+ 206 00c0 3420     		mov	r0, #52
+ 207 00c2 FFF7FEFF 		bl	send_serial_data
+  51:main.c        ****                   FIO3PIN = 0X00000004;
+ 208              		.loc 1 51 0
+ 209 00c6 584A     		ldr	r2, .L44+24
+ 210 00c8 0423     		mov	r3, #4
+ 211 00ca 1360     		str	r3, [r2]
+ 212              	.L19:
+  52:main.c        ****               }
+  53:main.c        **** 	      if((key==0x0b))
+ 213              		.loc 1 53 0
+ 214 00cc 3B1C     		mov	r3, r7
+ 215 00ce 1B68     		ldr	r3, [r3]
+ 216 00d0 0B2B     		cmp	r3, #11
+ 217 00d2 05D1     		bne	.L21
+  54:main.c        ****               {
+  55:main.c        **** 	          send_serial_data('5');
+ 218              		.loc 1 55 0
+ 219 00d4 3520     		mov	r0, #53
+ 220 00d6 FFF7FEFF 		bl	send_serial_data
+  56:main.c        ****         	  FIO3PIN = 0X00000005;
+ 221              		.loc 1 56 0
+ 222 00da 534A     		ldr	r2, .L44+24
+ 223 00dc 0523     		mov	r3, #5
+ 224 00de 1360     		str	r3, [r2]
+ 225              	.L21:
+  57:main.c        ****               }
+  58:main.c        ****     	      if( (key==0x0d))
+ 226              		.loc 1 58 0
+ 227 00e0 3B1C     		mov	r3, r7
+ 228 00e2 1B68     		ldr	r3, [r3]
+ 229 00e4 0D2B     		cmp	r3, #13
+ 230 00e6 05D1     		bne	.L23
+  59:main.c        ****               {
+  60:main.c        ****                   send_serial_data('6');
+ 231              		.loc 1 60 0
+ 232 00e8 3620     		mov	r0, #54
+ 233 00ea FFF7FEFF 		bl	send_serial_data
+  61:main.c        **** 	          FIO3PIN = 0X00000006;
+ 234              		.loc 1 61 0
+ 235 00ee 4E4A     		ldr	r2, .L44+24
+ 236 00f0 0623     		mov	r3, #6
+ 237 00f2 1360     		str	r3, [r2]
+ 238              	.L23:
+  62:main.c        **** 	      }
+  63:main.c        ****               if( (key==0x0e))
+ 239              		.loc 1 63 0
+ 240 00f4 3B1C     		mov	r3, r7
+ 241 00f6 1B68     		ldr	r3, [r3]
+ 242 00f8 0E2B     		cmp	r3, #14
+ 243 00fa 05D1     		bne	.L25
+  64:main.c        **** 	      {
+  65:main.c        ****         	  send_serial_data('7');
+ 244              		.loc 1 65 0
+ 245 00fc 3720     		mov	r0, #55
+ 246 00fe FFF7FEFF 		bl	send_serial_data
+  66:main.c        **** 	          FIO3PIN = 0X00000007;
+ 247              		.loc 1 66 0
+ 248 0102 494A     		ldr	r2, .L44+24
+ 249 0104 0723     		mov	r3, #7
+ 250 0106 1360     		str	r3, [r2]
+ 251              	.L25:
+  67:main.c        **** 	      }
+  68:main.c        **** 	      FIO4CLR = 0X00000d00;
+ 252              		.loc 1 68 0
+ 253 0108 484A     		ldr	r2, .L44+28
+ 254 010a D023     		mov	r3, #208
+ 255 010c 1B01     		lsl	r3, r3, #4
+ 256 010e 1360     		str	r3, [r2]
+  69:main.c        **** 	      delay();  
+ 257              		.loc 1 69 0
+ 258 0110 FFF7FEFF 		bl	delay
+  70:main.c        **** 	      
+  71:main.c        ****  	//Third Row
+  72:main.c        ****      	      FIO4SET = 0X00000b00;
+ 259              		.loc 1 72 0
+ 260 0114 424A     		ldr	r2, .L44+16
+ 261 0116 B023     		mov	r3, #176
+ 262 0118 1B01     		lsl	r3, r3, #4
+ 263 011a 1360     		str	r3, [r2]
+  73:main.c        ****               key = FIO4PIN;
+ 264              		.loc 1 73 0
+ 265 011c 414B     		ldr	r3, .L44+20
+ 266 011e 3A1C     		mov	r2, r7
+ 267 0120 1B68     		ldr	r3, [r3]
+ 268 0122 1360     		str	r3, [r2]
+  74:main.c        ****               key = (key & 0xf000) >> 12 ;
+ 269              		.loc 1 74 0
+ 270 0124 3B1C     		mov	r3, r7
+ 271 0126 1A68     		ldr	r2, [r3]
+ 272 0128 F023     		mov	r3, #240
+ 273 012a 1B02     		lsl	r3, r3, #8
+ 274 012c 1340     		and	r3, r3, r2
+ 275 012e 3A1C     		mov	r2, r7
+ 276 0130 1B0B     		lsr	r3, r3, #12
+ 277 0132 1360     		str	r3, [r2]
+  75:main.c        ****   
+  76:main.c        ****               if((key==0x07))
+ 278              		.loc 1 76 0
+ 279 0134 3B1C     		mov	r3, r7
+ 280 0136 1B68     		ldr	r3, [r3]
+ 281 0138 072B     		cmp	r3, #7
+ 282 013a 05D1     		bne	.L27
+  77:main.c        ****               {
+  78:main.c        ****          	  send_serial_data('8');
+ 283              		.loc 1 78 0
+ 284 013c 3820     		mov	r0, #56
+ 285 013e FFF7FEFF 		bl	send_serial_data
+  79:main.c        **** 	          FIO3PIN = 0X00000008;
+ 286              		.loc 1 79 0
+ 287 0142 394A     		ldr	r2, .L44+24
+ 288 0144 0823     		mov	r3, #8
+ 289 0146 1360     		str	r3, [r2]
+ 290              	.L27:
+  80:main.c        ****               }
+  81:main.c        **** 	      if((key==0x0b))
+ 291              		.loc 1 81 0
+ 292 0148 3B1C     		mov	r3, r7
+ 293 014a 1B68     		ldr	r3, [r3]
+ 294 014c 0B2B     		cmp	r3, #11
+ 295 014e 05D1     		bne	.L29
+  82:main.c        ****               {
+  83:main.c        **** 	           send_serial_data('9');
+ 296              		.loc 1 83 0
+ 297 0150 3920     		mov	r0, #57
+ 298 0152 FFF7FEFF 		bl	send_serial_data
+  84:main.c        ****                    FIO3PIN = 0X00000009;
+ 299              		.loc 1 84 0
+ 300 0156 344A     		ldr	r2, .L44+24
+ 301 0158 0923     		mov	r3, #9
+ 302 015a 1360     		str	r3, [r2]
+ 303              	.L29:
+  85:main.c        ****               }
+  86:main.c        **** 	      if( (key==0x0d))
+ 304              		.loc 1 86 0
+ 305 015c 3B1C     		mov	r3, r7
+ 306 015e 1B68     		ldr	r3, [r3]
+ 307 0160 0D2B     		cmp	r3, #13
+ 308 0162 05D1     		bne	.L31
+  87:main.c        ****               {
+  88:main.c        **** 	          send_serial_data('a');
+ 309              		.loc 1 88 0
+ 310 0164 6120     		mov	r0, #97
+ 311 0166 FFF7FEFF 		bl	send_serial_data
+  89:main.c        ****                   FIO3PIN = 0X0000000a;
+ 312              		.loc 1 89 0
+ 313 016a 2F4A     		ldr	r2, .L44+24
+ 314 016c 0A23     		mov	r3, #10
+ 315 016e 1360     		str	r3, [r2]
+ 316              	.L31:
+  90:main.c        ****               }
+  91:main.c        ****               if( (key==0x0e))
+ 317              		.loc 1 91 0
+ 318 0170 3B1C     		mov	r3, r7
+ 319 0172 1B68     		ldr	r3, [r3]
+ 320 0174 0E2B     		cmp	r3, #14
+ 321 0176 05D1     		bne	.L33
+  92:main.c        ****               {
+  93:main.c        ****           	  send_serial_data('b');
+ 322              		.loc 1 93 0
+ 323 0178 6220     		mov	r0, #98
+ 324 017a FFF7FEFF 		bl	send_serial_data
+  94:main.c        **** 	          FIO3PIN = 0X0000000b;
+ 325              		.loc 1 94 0
+ 326 017e 2A4A     		ldr	r2, .L44+24
+ 327 0180 0B23     		mov	r3, #11
+ 328 0182 1360     		str	r3, [r2]
+ 329              	.L33:
+  95:main.c        ****               }
+  96:main.c        ****               FIO4CLR = 0X00000b00;
+ 330              		.loc 1 96 0
+ 331 0184 294A     		ldr	r2, .L44+28
+ 332 0186 B023     		mov	r3, #176
+ 333 0188 1B01     		lsl	r3, r3, #4
+ 334 018a 1360     		str	r3, [r2]
+  97:main.c        ****               delay();
+ 335              		.loc 1 97 0
+ 336 018c FFF7FEFF 		bl	delay
+  98:main.c        ****        //Fourth Row   
+  99:main.c        ****    	      FIO4SET = 0X00000700;
+ 337              		.loc 1 99 0
+ 338 0190 234A     		ldr	r2, .L44+16
+ 339 0192 E023     		mov	r3, #224
+ 340 0194 DB00     		lsl	r3, r3, #3
+ 341 0196 1360     		str	r3, [r2]
+ 100:main.c        **** 	      key = FIO4PIN;
+ 342              		.loc 1 100 0
+ 343 0198 224B     		ldr	r3, .L44+20
+ 344 019a 3A1C     		mov	r2, r7
+ 345 019c 1B68     		ldr	r3, [r3]
+ 346 019e 1360     		str	r3, [r2]
+ 101:main.c        **** 	      key = (key & 0xf000) >> 12 ;
+ 347              		.loc 1 101 0
+ 348 01a0 3B1C     		mov	r3, r7
+ 349 01a2 1A68     		ldr	r2, [r3]
+ 350 01a4 F023     		mov	r3, #240
+ 351 01a6 1B02     		lsl	r3, r3, #8
+ 352 01a8 1340     		and	r3, r3, r2
+ 353 01aa 3A1C     		mov	r2, r7
+ 354 01ac 1B0B     		lsr	r3, r3, #12
+ 355 01ae 1360     		str	r3, [r2]
+ 102:main.c        ****       
+ 103:main.c        **** 	      if((key==0x07))
+ 356              		.loc 1 103 0
+ 357 01b0 3B1C     		mov	r3, r7
+ 358 01b2 1B68     		ldr	r3, [r3]
+ 359 01b4 072B     		cmp	r3, #7
+ 360 01b6 05D1     		bne	.L35
+ 104:main.c        ****               {
+ 105:main.c        ****            	  send_serial_data('c');
+ 361              		.loc 1 105 0
+ 362 01b8 6320     		mov	r0, #99
+ 363 01ba FFF7FEFF 		bl	send_serial_data
+ 106:main.c        ****                	  FIO3PIN = 0X0000000c;
+ 364              		.loc 1 106 0
+ 365 01be 1A4A     		ldr	r2, .L44+24
+ 366 01c0 0C23     		mov	r3, #12
+ 367 01c2 1360     		str	r3, [r2]
+ 368              	.L35:
+ 107:main.c        ****               }
+ 108:main.c        ****               if((key==0x0b))
+ 369              		.loc 1 108 0
+ 370 01c4 3B1C     		mov	r3, r7
+ 371 01c6 1B68     		ldr	r3, [r3]
+ 372 01c8 0B2B     		cmp	r3, #11
+ 373 01ca 05D1     		bne	.L37
+ 109:main.c        ****               {
+ 110:main.c        ****                   send_serial_data('d');
+ 374              		.loc 1 110 0
+ 375 01cc 6420     		mov	r0, #100
+ 376 01ce FFF7FEFF 		bl	send_serial_data
+ 111:main.c        ****                   FIO3PIN = 0X0000000d;
+ 377              		.loc 1 111 0
+ 378 01d2 154A     		ldr	r2, .L44+24
+ 379 01d4 0D23     		mov	r3, #13
+ 380 01d6 1360     		str	r3, [r2]
+ 381              	.L37:
+ 112:main.c        ****               }
+ 113:main.c        ****               if((key==0x0d))
+ 382              		.loc 1 113 0
+ 383 01d8 3B1C     		mov	r3, r7
+ 384 01da 1B68     		ldr	r3, [r3]
+ 385 01dc 0D2B     		cmp	r3, #13
+ 386 01de 05D1     		bne	.L39
+ 114:main.c        ****               {
+ 115:main.c        ****                   send_serial_data('e');
+ 387              		.loc 1 115 0
+ 388 01e0 6520     		mov	r0, #101
+ 389 01e2 FFF7FEFF 		bl	send_serial_data
+ 116:main.c        ****                   FIO3PIN = 0X0000000e;
+ 390              		.loc 1 116 0
+ 391 01e6 104A     		ldr	r2, .L44+24
+ 392 01e8 0E23     		mov	r3, #14
+ 393 01ea 1360     		str	r3, [r2]
+ 394              	.L39:
+ 117:main.c        ****               }
+ 118:main.c        ****               if( (key==0x0e))
+ 395              		.loc 1 118 0
+ 396 01ec 3B1C     		mov	r3, r7
+ 397 01ee 1B68     		ldr	r3, [r3]
+ 398 01f0 0E2B     		cmp	r3, #14
+ 399 01f2 05D1     		bne	.L41
+ 119:main.c        ****               {
+ 120:main.c        ****        		  send_serial_data('f');
+ 400              		.loc 1 120 0
+ 401 01f4 6620     		mov	r0, #102
+ 402 01f6 FFF7FEFF 		bl	send_serial_data
+ 121:main.c        ****                   FIO3PIN = 0X0000000f;
+ 403              		.loc 1 121 0
+ 404 01fa 0B4A     		ldr	r2, .L44+24
+ 405 01fc 0F23     		mov	r3, #15
+ 406 01fe 1360     		str	r3, [r2]
+ 407              	.L41:
+ 122:main.c        ****               }
+ 123:main.c        ****    	      FIO4CLR = 0X00000700;
+ 408              		.loc 1 123 0
+ 409 0200 0A4A     		ldr	r2, .L44+28
+ 410 0202 E023     		mov	r3, #224
+ 411 0204 DB00     		lsl	r3, r3, #3
+ 412 0206 1360     		str	r3, [r2]
+ 124:main.c        ****               delay();
+ 413              		.loc 1 124 0
+ 414 0208 FFF7FEFF 		bl	delay
+ 125:main.c        **** 	}
+ 415              		.loc 1 125 0
+ 416 020c 06E7     		b	.L10
+ 417              	.L45:
+ 418 020e 0000     		.align	2
+ 419              	.L44:
+ 420 0210 60C0FF3F 		.word	1073725536
+ 421 0214 FF008000 		.word	8388863
+ 422 0218 00C002E0 		.word	-536690688
+ 423 021c 088002E0 		.word	-536707064
+ 424 0220 98C0FF3F 		.word	1073725592
+ 425 0224 94C0FF3F 		.word	1073725588
+ 426 0228 74C0FF3F 		.word	1073725556
+ 427 022c 9CC0FF3F 		.word	1073725596
+ 428              	.LFE3:
+ 430              		.section	.text.send_serial_data,"ax",%progbits
+ 431              		.align	2
+ 432              		.global	send_serial_data
+ 433              		.code 16
+ 434              		.thumb_func
+ 436              	send_serial_data:
+ 437              	.LFB4:
+ 126:main.c        **** }
+ 127:main.c        **** void send_serial_data(int ch)
+ 128:main.c        **** {
+ 438              		.loc 1 128 0
+ 439 0000 80B5     		push	{r7, lr}
+ 440              	.LCFI6:
+ 441 0002 81B0     		sub	sp, sp, #4
+ 442              	.LCFI7:
+ 443 0004 00AF     		add	r7, sp, #0
+ 444              	.LCFI8:
+ 445 0006 3B1C     		mov	r3, r7
+ 446 0008 1860     		str	r0, [r3]
+ 447              	.L47:
+ 129:main.c        ****   while ((U0LSR & 0x20)!=0x20);
+ 448              		.loc 1 129 0
+ 449 000a 074B     		ldr	r3, .L50
+ 450 000c 1A68     		ldr	r2, [r3]
+ 451 000e 2023     		mov	r3, #32
+ 452 0010 1340     		and	r3, r3, r2
+ 453 0012 002B     		cmp	r3, #0
+ 454 0014 F9D0     		beq	.L47
+ 130:main.c        ****   U0THR = ch;
+ 455              		.loc 1 130 0
+ 456 0016 054B     		ldr	r3, .L50+4
+ 457 0018 3A1C     		mov	r2, r7
+ 458 001a 1268     		ldr	r2, [r2]
+ 459 001c 1A60     		str	r2, [r3]
+ 131:main.c        **** }
+ 460              		.loc 1 131 0
+ 461 001e BD46     		mov	sp, r7
+ 462 0020 01B0     		add	sp, sp, #4
+ 463              		@ sp needed for prologue
+ 464 0022 80BC     		pop	{r7}
+ 465 0024 01BC     		pop	{r0}
+ 466 0026 0047     		bx	r0
+ 467              	.L51:
+ 468              		.align	2
+ 469              	.L50:
+ 470 0028 14C000E0 		.word	-536821740
+ 471 002c 00C000E0 		.word	-536821760
+ 472              	.LFE4:
+ 474              		.section	.text.main,"ax",%progbits
+ 475              		.align	2
+ 476              		.global	main
+ 477              		.code 16
+ 478              		.thumb_func
+ 480              	main:
+ 481              	.LFB5:
+ 132:main.c        **** int main (void)
+ 133:main.c        **** {
+ 482              		.loc 1 133 0
+ 483 0000 80B5     		push	{r7, lr}
+ 484              	.LCFI9:
+ 485 0002 81B0     		sub	sp, sp, #4
+ 486              	.LCFI10:
+ 487 0004 00AF     		add	r7, sp, #0
+ 488              	.LCFI11:
+ 134:main.c        **** 	unsigned int Fdiv;
+ 135:main.c        **** 	FIO4DIR = 0XFF000fff;
+ 489              		.loc 1 135 0
+ 490 0006 184A     		ldr	r2, .L54
+ 491 0008 184B     		ldr	r3, .L54+4
+ 492 000a 1360     		str	r3, [r2]
+ 136:main.c        **** 	init_timer( ((72000000/100) - 1 ));
+ 493              		.loc 1 136 0
+ 494 000c 184B     		ldr	r3, .L54+8
+ 495 000e 181C     		mov	r0, r3
+ 496 0010 FFF7FEFF 		bl	init_timer
+ 137:main.c        **** 	PINSEL0 = 0x00000050;   
+ 497              		.loc 1 137 0
+ 498 0014 174A     		ldr	r2, .L54+12
+ 499 0016 5023     		mov	r3, #80
+ 500 0018 1360     		str	r3, [r2]
+ 138:main.c        **** 	U0LCR = 0x83;               // 8 bits, no Parity, 1 Stop bit  
+ 501              		.loc 1 138 0
+ 502 001a 174A     		ldr	r2, .L54+16
+ 503 001c 8323     		mov	r3, #131
+ 504 001e 1360     		str	r3, [r2]
+ 139:main.c        **** 	Fdiv = ( 72000000 / 16 ) / 19200 ;  //baud rate  
+ 505              		.loc 1 139 0
+ 506 0020 3A1C     		mov	r2, r7
+ 507 0022 EA23     		mov	r3, #234
+ 508 0024 1360     		str	r3, [r2]
+ 140:main.c        **** 	U0DLM = Fdiv / 256;
+ 509              		.loc 1 140 0
+ 510 0026 154A     		ldr	r2, .L54+20
+ 511 0028 3B1C     		mov	r3, r7
+ 512 002a 1B68     		ldr	r3, [r3]
+ 513 002c 1B0A     		lsr	r3, r3, #8
+ 514 002e 1360     		str	r3, [r2]
+ 141:main.c        **** 	U0DLL = Fdiv % 256;
+ 515              		.loc 1 141 0
+ 516 0030 1349     		ldr	r1, .L54+24
+ 517 0032 3B1C     		mov	r3, r7
+ 518 0034 1A68     		ldr	r2, [r3]
+ 519 0036 FF23     		mov	r3, #255
+ 520 0038 1340     		and	r3, r3, r2
+ 521 003a 0B60     		str	r3, [r1]
+ 142:main.c        ****    	U0LCR = 0x03;               // DLAB = 0
+ 522              		.loc 1 142 0
+ 523 003c 0E4A     		ldr	r2, .L54+16
+ 524 003e 0323     		mov	r3, #3
+ 525 0040 1360     		str	r3, [r2]
+ 143:main.c        **** 	send_serial_data('Z');
+ 526              		.loc 1 143 0
+ 527 0042 5A20     		mov	r0, #90
+ 528 0044 FFF7FEFF 		bl	send_serial_data
+ 144:main.c        **** 	send_serial_data(0x0d);
+ 529              		.loc 1 144 0
+ 530 0048 0D20     		mov	r0, #13
+ 531 004a FFF7FEFF 		bl	send_serial_data
+ 145:main.c        **** 	send_serial_data(0x0a);
+ 532              		.loc 1 145 0
+ 533 004e 0A20     		mov	r0, #10
+ 534 0050 FFF7FEFF 		bl	send_serial_data
+ 146:main.c        **** 	key_routine();
+ 535              		.loc 1 146 0
+ 536 0054 FFF7FEFF 		bl	key_routine
+ 147:main.c        **** 	return(0);
+ 537              		.loc 1 147 0
+ 538 0058 0023     		mov	r3, #0
+ 148:main.c        **** }
+ 539              		.loc 1 148 0
+ 540 005a 181C     		mov	r0, r3
+ 541 005c BD46     		mov	sp, r7
+ 542 005e 01B0     		add	sp, sp, #4
+ 543              		@ sp needed for prologue
+ 544 0060 80BC     		pop	{r7}
+ 545 0062 02BC     		pop	{r1}
+ 546 0064 0847     		bx	r1
+ 547              	.L55:
+ 548 0066 0000     		.align	2
+ 549              	.L54:
+ 550 0068 80C0FF3F 		.word	1073725568
+ 551 006c FF0F00FF 		.word	-16773121
+ 552 0070 7FFC0A00 		.word	719999
+ 553 0074 00C002E0 		.word	-536690688
+ 554 0078 0CC000E0 		.word	-536821748
+ 555 007c 04C000E0 		.word	-536821756
+ 556 0080 00C000E0 		.word	-536821760
+ 557              	.LFE5:
+ 671              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/ccIucWBl.s:1      .text:00000000 $t
+     /tmp/ccIucWBl.s:17     .text.delay:00000000 delay
+     /tmp/ccIucWBl.s:14     .text.delay:00000000 $t
+     /tmp/ccIucWBl.s:79     .text.key_routine:00000000 key_routine
+     /tmp/ccIucWBl.s:76     .text.key_routine:00000000 $t
+     /tmp/ccIucWBl.s:436    .text.send_serial_data:00000000 send_serial_data
+     /tmp/ccIucWBl.s:420    .text.key_routine:00000210 $d
+     /tmp/ccIucWBl.s:433    .text.send_serial_data:00000000 $t
+     /tmp/ccIucWBl.s:470    .text.send_serial_data:00000028 $d
+     /tmp/ccIucWBl.s:480    .text.main:00000000 main
+     /tmp/ccIucWBl.s:477    .text.main:00000000 $t
+     /tmp/ccIucWBl.s:550    .text.main:00000068 $d
+
+UNDEFINED SYMBOLS
+init_timer

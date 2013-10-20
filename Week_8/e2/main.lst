@@ -1,0 +1,414 @@
+   1              		.code	16
+   2              		.file	"main.c"
+  10              	.Ltext0:
+  11              		.section	.text.TargetResetInit,"ax",%progbits
+  12              		.align	2
+  13              		.global	TargetResetInit
+  14              		.code 16
+  15              		.thumb_func
+  17              	TargetResetInit:
+  18              	.LFB2:
+  19              		.file 1 "main.c"
+   1:main.c        **** #include "LPC23xx.h"
+   2:main.c        **** 
+   3:main.c        **** /**************************************************************************************************
+   4:main.c        **** 			Routine to set processor and pheripheral clock 
+   5:main.c        **** ***************************************************************************************************
+   6:main.c        **** void  TargetResetInit(void)
+   7:main.c        **** {
+  20              		.loc 1 7 0
+  21 0000 80B5     		push	{r7, lr}
+  22              	.LCFI0:
+  23 0002 02AF     		add	r7, sp, #8
+  24              	.LCFI1:
+   8:main.c        ****   // 72 Mhz Frequency
+   9:main.c        ****   if ((PLLSTAT & 0x02000000) > 0)
+  25              		.loc 1 9 0
+  26 0004 3F4B     		ldr	r3, .L11
+  27 0006 1A68     		ldr	r2, [r3]
+  28 0008 8023     		mov	r3, #128
+  29 000a 9B04     		lsl	r3, r3, #18
+  30 000c 1340     		and	r3, r3, r2
+  31 000e 002B     		cmp	r3, #0
+  32 0010 0DD0     		beq	.L2
+  10:main.c        ****   {
+  11:main.c        ****       /* If the PLL is already running   */
+  12:main.c        ****       PLLCON  &= ~0x02;                          /* Disconnect the PLL                             
+  33              		.loc 1 12 0
+  34 0012 3D49     		ldr	r1, .L11+4
+  35 0014 3C4B     		ldr	r3, .L11+4
+  36 0016 1A68     		ldr	r2, [r3]
+  37 0018 0223     		mov	r3, #2
+  38 001a 101C     		mov	r0, r2
+  39 001c 9843     		bic	r0, r0, r3
+  40 001e 031C     		mov	r3, r0
+  41 0020 0B60     		str	r3, [r1]
+  13:main.c        ****       PLLFEED  =  0xAA;                          /* PLL register update sequence, 0xAA, 0x55       
+  42              		.loc 1 13 0
+  43 0022 3A4A     		ldr	r2, .L11+8
+  44 0024 AA23     		mov	r3, #170
+  45 0026 1360     		str	r3, [r2]
+  14:main.c        ****       PLLFEED  =  0x55;
+  46              		.loc 1 14 0
+  47 0028 384A     		ldr	r2, .L11+8
+  48 002a 5523     		mov	r3, #85
+  49 002c 1360     		str	r3, [r2]
+  50              	.L2:
+  15:main.c        ****   }
+  16:main.c        ****   PLLCON   &= ~0x01;                            /* Disable the PLL                                 
+  51              		.loc 1 16 0
+  52 002e 3649     		ldr	r1, .L11+4
+  53 0030 354B     		ldr	r3, .L11+4
+  54 0032 1A68     		ldr	r2, [r3]
+  55 0034 0123     		mov	r3, #1
+  56 0036 101C     		mov	r0, r2
+  57 0038 9843     		bic	r0, r0, r3
+  58 003a 031C     		mov	r3, r0
+  59 003c 0B60     		str	r3, [r1]
+  17:main.c        ****   PLLFEED   =  0xAA;                           /* PLL register update sequence, 0xAA, 0x55         
+  60              		.loc 1 17 0
+  61 003e 334A     		ldr	r2, .L11+8
+  62 0040 AA23     		mov	r3, #170
+  63 0042 1360     		str	r3, [r2]
+  18:main.c        ****   PLLFEED   =  0x55;
+  64              		.loc 1 18 0
+  65 0044 314A     		ldr	r2, .L11+8
+  66 0046 5523     		mov	r3, #85
+  67 0048 1360     		str	r3, [r2]
+  19:main.c        ****   SCS      &= ~0x10;                         /* OSCRANGE = 0, Main OSC is between 1 and 20 Mhz     
+  68              		.loc 1 19 0
+  69 004a 3149     		ldr	r1, .L11+12
+  70 004c 304B     		ldr	r3, .L11+12
+  71 004e 1A68     		ldr	r2, [r3]
+  72 0050 1023     		mov	r3, #16
+  73 0052 101C     		mov	r0, r2
+  74 0054 9843     		bic	r0, r0, r3
+  75 0056 031C     		mov	r3, r0
+  76 0058 0B60     		str	r3, [r1]
+  20:main.c        ****   SCS      |=  0x20;                         /* OSCEN = 1, Enable the main oscillator              
+  77              		.loc 1 20 0
+  78 005a 2D49     		ldr	r1, .L11+12
+  79 005c 2C4B     		ldr	r3, .L11+12
+  80 005e 1A68     		ldr	r2, [r3]
+  81 0060 2023     		mov	r3, #32
+  82 0062 1343     		orr	r3, r3, r2
+  83 0064 0B60     		str	r3, [r1]
+  84              	.L4:
+  21:main.c        ****   while ((SCS &  0x40) == 0);
+  85              		.loc 1 21 0
+  86 0066 2A4B     		ldr	r3, .L11+12
+  87 0068 1A68     		ldr	r2, [r3]
+  88 006a 4023     		mov	r3, #64
+  89 006c 1340     		and	r3, r3, r2
+  90 006e 002B     		cmp	r3, #0
+  91 0070 F9D0     		beq	.L4
+  22:main.c        ****   CLKSRCSEL = 0x01;                         /* Select main OSC, 12MHz, as the PLL clock source     
+  92              		.loc 1 22 0
+  93 0072 284A     		ldr	r2, .L11+16
+  94 0074 0123     		mov	r3, #1
+  95 0076 1360     		str	r3, [r2]
+  23:main.c        ****   PLLCFG    = (24 << 0) | (1 << 16);         /* Configure the PLL multiplier and divider           
+  96              		.loc 1 23 0
+  97 0078 274A     		ldr	r2, .L11+20
+  98 007a 284B     		ldr	r3, .L11+24
+  99 007c 1360     		str	r3, [r2]
+  24:main.c        ****   PLLFEED   = 0xAA;                         /* PLL register update sequence, 0xAA, 0x55            
+ 100              		.loc 1 24 0
+ 101 007e 234A     		ldr	r2, .L11+8
+ 102 0080 AA23     		mov	r3, #170
+ 103 0082 1360     		str	r3, [r2]
+  25:main.c        ****   PLLFEED   = 0x55;
+ 104              		.loc 1 25 0
+ 105 0084 214A     		ldr	r2, .L11+8
+ 106 0086 5523     		mov	r3, #85
+ 107 0088 1360     		str	r3, [r2]
+  26:main.c        ****   PLLCON   |= 0x01;                        /* Enable the PLL                                       
+ 108              		.loc 1 26 0
+ 109 008a 1F49     		ldr	r1, .L11+4
+ 110 008c 1E4B     		ldr	r3, .L11+4
+ 111 008e 1A68     		ldr	r2, [r3]
+ 112 0090 0123     		mov	r3, #1
+ 113 0092 1343     		orr	r3, r3, r2
+ 114 0094 0B60     		str	r3, [r1]
+  27:main.c        ****   PLLFEED   = 0xAA;                        /* PLL register update sequence, 0xAA, 0x55             
+ 115              		.loc 1 27 0
+ 116 0096 1D4A     		ldr	r2, .L11+8
+ 117 0098 AA23     		mov	r3, #170
+ 118 009a 1360     		str	r3, [r2]
+  28:main.c        ****   PLLFEED   = 0x55;
+ 119              		.loc 1 28 0
+ 120 009c 1B4A     		ldr	r2, .L11+8
+ 121 009e 5523     		mov	r3, #85
+ 122 00a0 1360     		str	r3, [r2]
+  29:main.c        ****   CCLKCFG   = 3;                        /* Configure the ARM Core Processor clock divider          
+ 123              		.loc 1 29 0
+ 124 00a2 1F4A     		ldr	r2, .L11+28
+ 125 00a4 0323     		mov	r3, #3
+ 126 00a6 1360     		str	r3, [r2]
+  30:main.c        ****   USBCLKCFG = 5;                    /* Configure the USB clock divider                          */
+ 127              		.loc 1 30 0
+ 128 00a8 1E4A     		ldr	r2, .L11+32
+ 129 00aa 0523     		mov	r3, #5
+ 130 00ac 1360     		str	r3, [r2]
+ 131              	.L6:
+  31:main.c        ****   while ((PLLSTAT & 0x04000000) == 0);  
+ 132              		.loc 1 31 0
+ 133 00ae 154B     		ldr	r3, .L11
+ 134 00b0 1A68     		ldr	r2, [r3]
+ 135 00b2 8023     		mov	r3, #128
+ 136 00b4 DB04     		lsl	r3, r3, #19
+ 137 00b6 1340     		and	r3, r3, r2
+ 138 00b8 002B     		cmp	r3, #0
+ 139 00ba F8D0     		beq	.L6
+  32:main.c        ****   PCLKSEL0  = 0xAAAAAAAA;                     /* Set peripheral clocks to be half of main clock    
+ 140              		.loc 1 32 0
+ 141 00bc 1A4A     		ldr	r2, .L11+36
+ 142 00be 1B4B     		ldr	r3, .L11+40
+ 143 00c0 1360     		str	r3, [r2]
+  33:main.c        ****   PCLKSEL1  = 0x22AAA8AA;
+ 144              		.loc 1 33 0
+ 145 00c2 1B4A     		ldr	r2, .L11+44
+ 146 00c4 1B4B     		ldr	r3, .L11+48
+ 147 00c6 1360     		str	r3, [r2]
+  34:main.c        ****   PLLCON   |= 0x02;                         /* Connect the PLL. The PLL is now the active clock sou
+ 148              		.loc 1 34 0
+ 149 00c8 0F49     		ldr	r1, .L11+4
+ 150 00ca 0F4B     		ldr	r3, .L11+4
+ 151 00cc 1A68     		ldr	r2, [r3]
+ 152 00ce 0223     		mov	r3, #2
+ 153 00d0 1343     		orr	r3, r3, r2
+ 154 00d2 0B60     		str	r3, [r1]
+  35:main.c        ****   PLLFEED   = 0xAA;                          /* PLL register update sequence, 0xAA, 0x55           
+ 155              		.loc 1 35 0
+ 156 00d4 0D4A     		ldr	r2, .L11+8
+ 157 00d6 AA23     		mov	r3, #170
+ 158 00d8 1360     		str	r3, [r2]
+  36:main.c        ****   PLLFEED   = 0x55;
+ 159              		.loc 1 36 0
+ 160 00da 0C4A     		ldr	r2, .L11+8
+ 161 00dc 5523     		mov	r3, #85
+ 162 00de 1360     		str	r3, [r2]
+ 163              	.L8:
+  37:main.c        ****   while ((PLLSTAT & 0x02000000) == 0);  
+ 164              		.loc 1 37 0
+ 165 00e0 084B     		ldr	r3, .L11
+ 166 00e2 1A68     		ldr	r2, [r3]
+ 167 00e4 8023     		mov	r3, #128
+ 168 00e6 9B04     		lsl	r3, r3, #18
+ 169 00e8 1340     		and	r3, r3, r2
+ 170 00ea 002B     		cmp	r3, #0
+ 171 00ec F8D0     		beq	.L8
+  38:main.c        ****   PCLKSEL0 = 0x55555555;  		     /* PCLK is the same as CCLK */
+ 172              		.loc 1 38 0
+ 173 00ee 0E4A     		ldr	r2, .L11+36
+ 174 00f0 114B     		ldr	r3, .L11+52
+ 175 00f2 1360     		str	r3, [r2]
+  39:main.c        ****   PCLKSEL1 = 0x55555555;  
+ 176              		.loc 1 39 0
+ 177 00f4 0E4A     		ldr	r2, .L11+44
+ 178 00f6 104B     		ldr	r3, .L11+52
+ 179 00f8 1360     		str	r3, [r2]
+  40:main.c        **** }
+ 180              		.loc 1 40 0
+ 181 00fa BD46     		mov	sp, r7
+ 182 00fc 82B0     		sub	sp, sp, #8
+ 183              		@ sp needed for prologue
+ 184 00fe 80BC     		pop	{r7}
+ 185 0100 01BC     		pop	{r0}
+ 186 0102 0047     		bx	r0
+ 187              	.L12:
+ 188              		.align	2
+ 189              	.L11:
+ 190 0104 88C01FE0 		.word	-534790008
+ 191 0108 80C01FE0 		.word	-534790016
+ 192 010c 8CC01FE0 		.word	-534790004
+ 193 0110 A0C11FE0 		.word	-534789728
+ 194 0114 0CC11FE0 		.word	-534789876
+ 195 0118 84C01FE0 		.word	-534790012
+ 196 011c 18000100 		.word	65560
+ 197 0120 04C11FE0 		.word	-534789884
+ 198 0124 08C11FE0 		.word	-534789880
+ 199 0128 A8C11FE0 		.word	-534789720
+ 200 012c AAAAAAAA 		.word	-1431655766
+ 201 0130 ACC11FE0 		.word	-534789716
+ 202 0134 AAA8AA22 		.word	581609642
+ 203 0138 55555555 		.word	1431655765
+ 204              	.LFE2:
+ 206              		.section	.text.delay,"ax",%progbits
+ 207              		.align	2
+ 208              		.code 16
+ 209              		.thumb_func
+ 211              	delay:
+ 212              	.LFB3:
+  41:main.c        **** // delay routine 
+  42:main.c        **** static void delay(void)
+  43:main.c        **** {
+ 213              		.loc 1 43 0
+ 214 0000 80B5     		push	{r7, lr}
+ 215              	.LCFI2:
+ 216 0002 82B0     		sub	sp, sp, #8
+ 217              	.LCFI3:
+ 218 0004 00AF     		add	r7, sp, #0
+ 219              	.LCFI4:
+  44:main.c        **** 	unsigned int i,j;
+  45:main.c        **** 	for(i=0;i<0xef;i++)
+ 220              		.loc 1 45 0
+ 221 0006 3A1C     		mov	r2, r7
+ 222 0008 0023     		mov	r3, #0
+ 223 000a 1360     		str	r3, [r2]
+ 224 000c 11E0     		b	.L14
+ 225              	.L15:
+  46:main.c        **** 	 for(j=0;j<0xef;j++);
+ 226              		.loc 1 46 0
+ 227 000e 3A1D     		add	r2, r7, #4
+ 228 0010 0023     		mov	r3, #0
+ 229 0012 1360     		str	r3, [r2]
+ 230 0014 04E0     		b	.L16
+ 231              	.L17:
+ 232 0016 3A1D     		add	r2, r7, #4
+ 233 0018 3B1D     		add	r3, r7, #4
+ 234 001a 1B68     		ldr	r3, [r3]
+ 235 001c 0133     		add	r3, r3, #1
+ 236 001e 1360     		str	r3, [r2]
+ 237              	.L16:
+ 238 0020 3B1D     		add	r3, r7, #4
+ 239 0022 1B68     		ldr	r3, [r3]
+ 240 0024 EE2B     		cmp	r3, #238
+ 241 0026 F6D9     		bls	.L17
+ 242              		.loc 1 45 0
+ 243 0028 3A1C     		mov	r2, r7
+ 244 002a 3B1C     		mov	r3, r7
+ 245 002c 1B68     		ldr	r3, [r3]
+ 246 002e 0133     		add	r3, r3, #1
+ 247 0030 1360     		str	r3, [r2]
+ 248              	.L14:
+ 249 0032 3B1C     		mov	r3, r7
+ 250 0034 1B68     		ldr	r3, [r3]
+ 251 0036 EE2B     		cmp	r3, #238
+ 252 0038 E9D9     		bls	.L15
+  47:main.c        **** }
+ 253              		.loc 1 47 0
+ 254 003a BD46     		mov	sp, r7
+ 255 003c 02B0     		add	sp, sp, #8
+ 256              		@ sp needed for prologue
+ 257 003e 80BC     		pop	{r7}
+ 258 0040 01BC     		pop	{r0}
+ 259 0042 0047     		bx	r0
+ 260              	.LFE3:
+ 262              		.section	.text.main,"ax",%progbits
+ 263              		.align	2
+ 264              		.global	main
+ 265              		.code 16
+ 266              		.thumb_func
+ 268              	main:
+ 269              	.LFB4:
+  48:main.c        **** /************************* main routine ***********************************************************
+  49:main.c        **** int main ()
+  50:main.c        **** {
+ 270              		.loc 1 50 0
+ 271 0000 80B5     		push	{r7, lr}
+ 272              	.LCFI5:
+ 273 0002 81B0     		sub	sp, sp, #4
+ 274              	.LCFI6:
+ 275 0004 00AF     		add	r7, sp, #0
+ 276              	.LCFI7:
+  51:main.c        **** 	TargetResetInit();
+ 277              		.loc 1 51 0
+ 278 0006 FFF7FEFF 		bl	TargetResetInit
+  52:main.c        **** 	init_timer(72000000/100 -1);
+ 279              		.loc 1 52 0
+ 280 000a 174B     		ldr	r3, .L27
+ 281 000c 181C     		mov	r0, r3
+ 282 000e FFF7FEFF 		bl	init_timer
+  53:main.c        **** 	IODIR0=0XFFFFFFFF;
+ 283              		.loc 1 53 0
+ 284 0012 164A     		ldr	r2, .L27+4
+ 285 0014 0123     		mov	r3, #1
+ 286 0016 5B42     		neg	r3, r3
+ 287 0018 1360     		str	r3, [r2]
+ 288              	.L22:
+ 289              	.LBB2:
+  54:main.c        **** 	while(1)
+  55:main.c        **** 	{
+  56:main.c        **** 		for(int k=0;k<10;k++)
+ 290              		.loc 1 56 0
+ 291 001a 3A1C     		mov	r2, r7
+ 292 001c 0023     		mov	r3, #0
+ 293 001e 1360     		str	r3, [r2]
+ 294 0020 1CE0     		b	.L23
+ 295              	.L24:
+  57:main.c        **** 		{
+  58:main.c        **** 			IOPIN0=0X00000240;
+ 296              		.loc 1 58 0
+ 297 0022 134A     		ldr	r2, .L27+8
+ 298 0024 9023     		mov	r3, #144
+ 299 0026 9B00     		lsl	r3, r3, #2
+ 300 0028 1360     		str	r3, [r2]
+  59:main.c        **** 			delay();
+ 301              		.loc 1 59 0
+ 302 002a FFF7FEFF 		bl	delay
+  60:main.c        **** 			IOPIN0=0X00000140;
+ 303              		.loc 1 60 0
+ 304 002e 104A     		ldr	r2, .L27+8
+ 305 0030 A023     		mov	r3, #160
+ 306 0032 5B00     		lsl	r3, r3, #1
+ 307 0034 1360     		str	r3, [r2]
+  61:main.c        **** 			delay();
+ 308              		.loc 1 61 0
+ 309 0036 FFF7FEFF 		bl	delay
+  62:main.c        **** 			IOPIN0=0X00000180;
+ 310              		.loc 1 62 0
+ 311 003a 0D4A     		ldr	r2, .L27+8
+ 312 003c C023     		mov	r3, #192
+ 313 003e 5B00     		lsl	r3, r3, #1
+ 314 0040 1360     		str	r3, [r2]
+  63:main.c        **** 			delay();
+ 315              		.loc 1 63 0
+ 316 0042 FFF7FEFF 		bl	delay
+  64:main.c        **** 			IOPIN0=0X00000280;
+ 317              		.loc 1 64 0
+ 318 0046 0A4A     		ldr	r2, .L27+8
+ 319 0048 A023     		mov	r3, #160
+ 320 004a 9B00     		lsl	r3, r3, #2
+ 321 004c 1360     		str	r3, [r2]
+  65:main.c        **** 			delay();
+ 322              		.loc 1 65 0
+ 323 004e FFF7FEFF 		bl	delay
+ 324              		.loc 1 56 0
+ 325 0052 3A1C     		mov	r2, r7
+ 326 0054 3B1C     		mov	r3, r7
+ 327 0056 1B68     		ldr	r3, [r3]
+ 328 0058 0133     		add	r3, r3, #1
+ 329 005a 1360     		str	r3, [r2]
+ 330              	.L23:
+ 331 005c 3B1C     		mov	r3, r7
+ 332 005e 1B68     		ldr	r3, [r3]
+ 333 0060 092B     		cmp	r3, #9
+ 334 0062 DEDD     		ble	.L24
+  66:main.c        **** 		}
+  67:main.c        **** 	}		
+ 335              		.loc 1 67 0
+ 336 0064 D9E7     		b	.L22
+ 337              	.L28:
+ 338 0066 0000     		.align	2
+ 339              	.L27:
+ 340 0068 7FFC0A00 		.word	719999
+ 341 006c 088002E0 		.word	-536707064
+ 342 0070 008002E0 		.word	-536707072
+ 343              	.LBE2:
+ 344              	.LFE4:
+ 431              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/ccju57pq.s:1      .text:00000000 $t
+     /tmp/ccju57pq.s:17     .text.TargetResetInit:00000000 TargetResetInit
+     /tmp/ccju57pq.s:14     .text.TargetResetInit:00000000 $t
+     /tmp/ccju57pq.s:190    .text.TargetResetInit:00000104 $d
+     /tmp/ccju57pq.s:208    .text.delay:00000000 $t
+     /tmp/ccju57pq.s:211    .text.delay:00000000 delay
+     /tmp/ccju57pq.s:268    .text.main:00000000 main
+     /tmp/ccju57pq.s:265    .text.main:00000000 $t
+     /tmp/ccju57pq.s:340    .text.main:00000068 $d
+
+UNDEFINED SYMBOLS
+init_timer

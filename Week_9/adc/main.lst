@@ -1,0 +1,350 @@
+   1              		.code	16
+   2              		.file	"main.c"
+  10              	.Ltext0:
+  11              		.section	.text.serial_tx,"ax",%progbits
+  12              		.align	2
+  13              		.global	serial_tx
+  14              		.code 16
+  15              		.thumb_func
+  17              	serial_tx:
+  18              	.LFB2:
+  19              		.file 1 "main.c"
+   1:main.c        **** #include "LPC23xx.h"
+   2:main.c        **** /********************* serial Transmission routine***********************************/	
+   3:main.c        **** void serial_tx(int ch)
+   4:main.c        **** {
+  20              		.loc 1 4 0
+  21              	.LVL0:
+  22              		@ lr needed for prologue
+  23              	.L3:
+   5:main.c        ****   while ((U0LSR & 0x20)!=0x20);
+  24              		.loc 1 5 0
+  25 0000 034B     		ldr	r3, .L8
+  26 0002 1B68     		ldr	r3, [r3]
+  27 0004 9A06     		lsl	r2, r3, #26
+  28 0006 FBD5     		bpl	.L3
+   6:main.c        ****   U0THR = ch;
+  29              		.loc 1 6 0
+  30 0008 024B     		ldr	r3, .L8+4
+   7:main.c        **** }
+  31              		.loc 1 7 0
+  32              		@ sp needed for prologue
+  33              		.loc 1 6 0
+  34 000a 1860     		str	r0, [r3]
+  35              		.loc 1 7 0
+  36 000c 7047     		bx	lr
+  37              	.L9:
+  38 000e 0000     		.align	2
+  39              	.L8:
+  40 0010 14C000E0 		.word	-536821740
+  41 0014 00C000E0 		.word	-536821760
+  42              	.LFE2:
+  44              		.section	.text.atoh,"ax",%progbits
+  45              		.align	2
+  46              		.global	atoh
+  47              		.code 16
+  48              		.thumb_func
+  50              	atoh:
+  51              	.LFB3:
+   8:main.c        **** /**************************** Routine for converting hex value to ascii value *****************/	
+   9:main.c        **** int atoh(int ch)
+  10:main.c        **** {
+  52              		.loc 1 10 0
+  53              	.LVL1:
+  54              		@ lr needed for prologue
+  11:main.c        **** 	if(ch<=0x09)
+  55              		.loc 1 11 0
+  56 0000 0928     		cmp	r0, #9
+  57 0002 01DC     		bgt	.L11
+  12:main.c        **** 		ch = ch + 0x30;
+  58              		.loc 1 12 0
+  59 0004 3030     		add	r0, r0, #48
+  60              	.LVL2:
+  61 0006 00E0     		b	.L13
+  62              	.L11:
+  13:main.c        **** 	else
+  14:main.c        **** 		ch = ch + 0x37;
+  63              		.loc 1 14 0
+  64 0008 3730     		add	r0, r0, #55
+  65              	.LVL3:
+  66              	.L13:
+  67              	.LVL4:
+  15:main.c        **** 	return(ch);
+  16:main.c        **** }
+  68              		.loc 1 16 0
+  69              		@ sp needed for prologue
+  70 000a 7047     		bx	lr
+  71              	.LFE3:
+  73              		.section	.text.main,"ax",%progbits
+  74              		.align	2
+  75              		.global	main
+  76              		.code 16
+  77              		.thumb_func
+  79              	main:
+  80              	.LFB4:
+  17:main.c        **** /*********************************** main routine *************************************************
+  18:main.c        **** int  main ()
+  19:main.c        **** {
+  81              		.loc 1 19 0
+  82 0000 00B5     		push	{lr}
+  83              	.LCFI0:
+  20:main.c        **** 	unsigned int Fdiv,value;
+  21:main.c        **** 	init_timer( ((72000000/100) - 1) );
+  84              		.loc 1 21 0
+  85 0002 3248     		ldr	r0, .L56
+  86 0004 FFF7FEFF 		bl	init_timer
+  22:main.c        **** 
+  23:main.c        **** 	PCONP |=0X00001000;		//switch adc from disable state to enable state  
+  87              		.loc 1 23 0
+  88 0008 3149     		ldr	r1, .L56+4
+  89 000a 8023     		mov	r3, #128
+  90 000c 0A68     		ldr	r2, [r1]
+  91 000e 5B01     		lsl	r3, r3, #5
+  92 0010 1A43     		orr	r2, r2, r3
+  24:main.c        **** 	PINSEL0 = 0x00000050; 		//Pinselection for uart tx and rx lines
+  93              		.loc 1 24 0
+  94 0012 304B     		ldr	r3, .L56+8
+  95              		.loc 1 23 0
+  96 0014 0A60     		str	r2, [r1]
+  97              		.loc 1 24 0
+  98 0016 5022     		mov	r2, #80
+  99 0018 1A60     		str	r2, [r3]
+  25:main.c        **** 	PINSEL1	= 0X01554000;		//Pinselection for adc0.0 
+ 100              		.loc 1 25 0
+ 101 001a 2F4A     		ldr	r2, .L56+12
+ 102 001c 0433     		add	r3, r3, #4
+  26:main.c        **** 
+  27:main.c        **** 	/************** Uart initialization **********************************/
+  28:main.c        **** 
+  29:main.c        **** 	U0LCR = 0x83;               // 8 bits, no Parity, 1 Stop bit  
+ 103              		.loc 1 29 0
+ 104 001e 2F49     		ldr	r1, .L56+16
+ 105              		.loc 1 25 0
+ 106 0020 1A60     		str	r2, [r3]
+ 107              		.loc 1 29 0
+ 108 0022 8323     		mov	r3, #131
+ 109 0024 0B60     		str	r3, [r1]
+  30:main.c        **** 	Fdiv = ( 72000000 / 16 ) / 19200 ;  //baud rate  
+  31:main.c        **** 	U0DLM = Fdiv / 256;
+ 110              		.loc 1 31 0
+ 111 0026 2E4B     		ldr	r3, .L56+20
+ 112 0028 0022     		mov	r2, #0
+ 113 002a 1A60     		str	r2, [r3]
+  32:main.c        **** 	U0DLL = Fdiv % 256;
+ 114              		.loc 1 32 0
+ 115 002c EA22     		mov	r2, #234
+ 116 002e 043B     		sub	r3, r3, #4
+ 117 0030 1A60     		str	r2, [r3]
+  33:main.c        ****    	U0LCR = 0x03;               // DLAB = 0
+ 118              		.loc 1 33 0
+ 119 0032 0323     		mov	r3, #3
+ 120 0034 0B60     		str	r3, [r1]
+  34:main.c        **** 	
+  35:main.c        ****   	AD0CR = 0X01210F01; // Adc initialization
+ 121              		.loc 1 35 0
+ 122 0036 2B4A     		ldr	r2, .L56+24
+ 123 0038 2B4B     		ldr	r3, .L56+28
+ 124              	.L55:
+ 125 003a 1A60     		str	r2, [r3]
+ 126              	.L54:
+  36:main.c        **** 	while(1) 
+  37:main.c        **** 	{
+  38:main.c        **** 		while((AD0DR0 & 0X80000000)!=0X80000000);	// Wait here until adc make conversion complete
+ 127              		.loc 1 38 0
+ 128 003c 2B4A     		ldr	r2, .L56+32
+ 129 003e 1368     		ldr	r3, [r2]
+ 130 0040 002B     		cmp	r3, #0
+ 131 0042 FBDA     		bge	.L54
+  39:main.c        **** 	
+  40:main.c        **** 		/************* To get converted value and display it on the serial port****************/
+  41:main.c        ****             	value = (AD0DR0>>6)& 0x3ff ;    
+ 132              		.loc 1 41 0
+ 133 0044 1368     		ldr	r3, [r2]
+ 134 0046 1B04     		lsl	r3, r3, #16
+ 135 0048 990D     		lsr	r1, r3, #22
+ 136              	.LVL5:
+ 137              	.L18:
+ 138              	.LBB20:
+ 139              	.LBB21:
+ 140              		.loc 1 5 0
+ 141 004a 294B     		ldr	r3, .L56+36
+ 142 004c 1B68     		ldr	r3, [r3]
+ 143 004e 9806     		lsl	r0, r3, #26
+ 144 0050 FBD5     		bpl	.L18
+ 145              		.loc 1 6 0
+ 146 0052 284B     		ldr	r3, .L56+40
+ 147 0054 0922     		mov	r2, #9
+ 148 0056 1A60     		str	r2, [r3]
+ 149              	.LBE21:
+ 150              	.LBE20:
+  42:main.c        **** 		serial_tx('\t');
+  43:main.c        **** 		serial_tx(atoh((value&0x300)>>8));
+ 151              		.loc 1 43 0
+ 152 0058 0B0A     		lsr	r3, r1, #8
+ 153              	.LVL6:
+ 154              	.LBB22:
+ 155              	.LBB23:
+ 156              		.loc 1 11 0
+ 157 005a 092B     		cmp	r3, #9
+ 158 005c 02DC     		bgt	.L20
+ 159              		.loc 1 12 0
+ 160 005e 1A1C     		mov	r2, r3
+ 161              	.LVL7:
+ 162 0060 3032     		add	r2, r2, #48
+ 163 0062 01E0     		b	.L38
+ 164              	.LVL8:
+ 165              	.L20:
+ 166              		.loc 1 14 0
+ 167 0064 1A1C     		mov	r2, r3
+ 168              	.LVL9:
+ 169 0066 3732     		add	r2, r2, #55
+ 170              	.L38:
+ 171              	.LBE23:
+ 172              	.LBE22:
+ 173              	.LBB24:
+ 174              	.LBB25:
+ 175              		.loc 1 5 0
+ 176 0068 214B     		ldr	r3, .L56+36
+ 177              	.LVL10:
+ 178 006a 1B68     		ldr	r3, [r3]
+ 179 006c 9806     		lsl	r0, r3, #26
+ 180 006e FBD5     		bpl	.L38
+ 181              		.loc 1 6 0
+ 182 0070 204B     		ldr	r3, .L56+40
+ 183 0072 1A60     		str	r2, [r3]
+ 184              	.LBE25:
+ 185              	.LBE24:
+  44:main.c        **** 		serial_tx(atoh((value&0xf0)>>4));
+ 186              		.loc 1 44 0
+ 187 0074 0B06     		lsl	r3, r1, #24
+ 188 0076 1B0F     		lsr	r3, r3, #28
+ 189              	.LVL11:
+ 190              	.LBB26:
+ 191              	.LBB27:
+ 192              		.loc 1 11 0
+ 193 0078 092B     		cmp	r3, #9
+ 194 007a 02DC     		bgt	.L24
+ 195              		.loc 1 12 0
+ 196 007c 1A1C     		mov	r2, r3
+ 197              	.LVL12:
+ 198 007e 3032     		add	r2, r2, #48
+ 199 0080 01E0     		b	.L39
+ 200              	.LVL13:
+ 201              	.L24:
+ 202              		.loc 1 14 0
+ 203 0082 1A1C     		mov	r2, r3
+ 204              	.LVL14:
+ 205 0084 3732     		add	r2, r2, #55
+ 206              	.L39:
+ 207              	.LBE27:
+ 208              	.LBE26:
+ 209              	.LBB28:
+ 210              	.LBB29:
+ 211              		.loc 1 5 0
+ 212 0086 1A4B     		ldr	r3, .L56+36
+ 213              	.LVL15:
+ 214 0088 1B68     		ldr	r3, [r3]
+ 215 008a 9806     		lsl	r0, r3, #26
+ 216 008c FBD5     		bpl	.L39
+ 217              		.loc 1 6 0
+ 218 008e 194B     		ldr	r3, .L56+40
+ 219 0090 1A60     		str	r2, [r3]
+ 220              	.LBE29:
+ 221              	.LBE28:
+  45:main.c        **** 		serial_tx(atoh(value&0x0f));
+ 222              		.loc 1 45 0
+ 223 0092 0F23     		mov	r3, #15
+ 224 0094 0B40     		and	r3, r3, r1
+ 225              	.LVL16:
+ 226              	.LBB30:
+ 227              	.LBB31:
+ 228              		.loc 1 11 0
+ 229 0096 092B     		cmp	r3, #9
+ 230 0098 02DC     		bgt	.L28
+ 231              		.loc 1 12 0
+ 232 009a 1A1C     		mov	r2, r3
+ 233              	.LVL17:
+ 234 009c 3032     		add	r2, r2, #48
+ 235 009e 01E0     		b	.L40
+ 236              	.LVL18:
+ 237              	.L28:
+ 238              		.loc 1 14 0
+ 239 00a0 1A1C     		mov	r2, r3
+ 240              	.LVL19:
+ 241 00a2 3732     		add	r2, r2, #55
+ 242              	.L40:
+ 243              	.LBE31:
+ 244              	.LBE30:
+ 245              	.LBB32:
+ 246              	.LBB33:
+ 247              		.loc 1 5 0
+ 248 00a4 124B     		ldr	r3, .L56+36
+ 249              	.LVL20:
+ 250 00a6 1B68     		ldr	r3, [r3]
+ 251 00a8 9906     		lsl	r1, r3, #26
+ 252 00aa FBD5     		bpl	.L40
+ 253              	.LVL21:
+ 254              		.loc 1 6 0
+ 255 00ac 114B     		ldr	r3, .L56+40
+ 256 00ae 1A60     		str	r2, [r3]
+ 257              	.L32:
+ 258              	.LBE33:
+ 259              	.LBE32:
+ 260              	.LBB34:
+ 261              	.LBB35:
+ 262              		.loc 1 5 0
+ 263 00b0 0F4B     		ldr	r3, .L56+36
+ 264 00b2 1B68     		ldr	r3, [r3]
+ 265 00b4 9A06     		lsl	r2, r3, #26
+ 266 00b6 FBD5     		bpl	.L32
+ 267              	.LVL22:
+ 268              		.loc 1 6 0
+ 269 00b8 0E4B     		ldr	r3, .L56+40
+ 270 00ba 0D22     		mov	r2, #13
+ 271 00bc 1A60     		str	r2, [r3]
+ 272              	.L34:
+ 273              	.LBE35:
+ 274              	.LBE34:
+ 275              	.LBB36:
+ 276              	.LBB37:
+ 277              		.loc 1 5 0
+ 278 00be 0C4B     		ldr	r3, .L56+36
+ 279 00c0 1B68     		ldr	r3, [r3]
+ 280 00c2 9806     		lsl	r0, r3, #26
+ 281 00c4 FBD5     		bpl	.L34
+ 282              		.loc 1 6 0
+ 283 00c6 0B4B     		ldr	r3, .L56+40
+ 284 00c8 0A22     		mov	r2, #10
+ 285 00ca B6E7     		b	.L55
+ 286              	.L57:
+ 287              		.align	2
+ 288              	.L56:
+ 289 00cc 7FFC0A00 		.word	719999
+ 290 00d0 C4C01FE0 		.word	-534789948
+ 291 00d4 00C002E0 		.word	-536690688
+ 292 00d8 00405501 		.word	22364160
+ 293 00dc 0CC000E0 		.word	-536821748
+ 294 00e0 04C000E0 		.word	-536821756
+ 295 00e4 010F2101 		.word	18943745
+ 296 00e8 004003E0 		.word	-536657920
+ 297 00ec 104003E0 		.word	-536657904
+ 298 00f0 14C000E0 		.word	-536821740
+ 299 00f4 00C000E0 		.word	-536821760
+ 300              	.LBE37:
+ 301              	.LBE36:
+ 302              	.LFE4:
+ 350              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/cc5vZoP2.s:1      .text:00000000 $t
+     /tmp/cc5vZoP2.s:17     .text.serial_tx:00000000 serial_tx
+     /tmp/cc5vZoP2.s:14     .text.serial_tx:00000000 $t
+     /tmp/cc5vZoP2.s:40     .text.serial_tx:00000010 $d
+     /tmp/cc5vZoP2.s:50     .text.atoh:00000000 atoh
+     /tmp/cc5vZoP2.s:47     .text.atoh:00000000 $t
+     /tmp/cc5vZoP2.s:79     .text.main:00000000 main
+     /tmp/cc5vZoP2.s:76     .text.main:00000000 $t
+     /tmp/cc5vZoP2.s:289    .text.main:000000cc $d
+
+UNDEFINED SYMBOLS
+init_timer
