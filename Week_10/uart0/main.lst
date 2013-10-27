@@ -1,0 +1,248 @@
+   1              		.code	16
+   2              		.file	"main.c"
+  10              	.Ltext0:
+  11              		.section	.text.serial_rx,"ax",%progbits
+  12              		.align	2
+  13              		.global	serial_rx
+  14              		.code 16
+  15              		.thumb_func
+  17              	serial_rx:
+  18              	.LFB2:
+  19              		.file 1 "main.c"
+   1:main.c        **** #include "LPC23xx.h"
+   2:main.c        **** // serial Reception routine
+   3:main.c        **** int serial_rx(void)
+   4:main.c        **** {
+  20              		.loc 1 4 0
+  21              		@ lr needed for prologue
+  22              	.L3:
+   5:main.c        **** 	while (!(U0LSR & 0x01));
+  23              		.loc 1 5 0
+  24 0000 034B     		ldr	r3, .L8
+  25 0002 1B68     		ldr	r3, [r3]
+  26 0004 DA07     		lsl	r2, r3, #31
+  27 0006 FBD5     		bpl	.L3
+   6:main.c        **** 	return (U0RBR);
+  28              		.loc 1 6 0
+  29 0008 024B     		ldr	r3, .L8+4
+  30 000a 1868     		ldr	r0, [r3]
+   7:main.c        **** }
+  31              		.loc 1 7 0
+  32              		@ sp needed for prologue
+  33 000c 7047     		bx	lr
+  34              	.L9:
+  35 000e 0000     		.align	2
+  36              	.L8:
+  37 0010 14C000E0 		.word	-536821740
+  38 0014 00C000E0 		.word	-536821760
+  39              	.LFE2:
+  41              		.section	.text.serial_tx,"ax",%progbits
+  42              		.align	2
+  43              		.global	serial_tx
+  44              		.code 16
+  45              		.thumb_func
+  47              	serial_tx:
+  48              	.LFB3:
+   8:main.c        **** //serial transmission routine 
+   9:main.c        **** void serial_tx(int ch)
+  10:main.c        **** {
+  49              		.loc 1 10 0
+  50              	.LVL0:
+  51              		@ lr needed for prologue
+  52              	.L12:
+  11:main.c        ****   while ((U0LSR & 0x20)!=0x20);
+  53              		.loc 1 11 0
+  54 0000 034B     		ldr	r3, .L17
+  55 0002 1B68     		ldr	r3, [r3]
+  56 0004 9A06     		lsl	r2, r3, #26
+  57 0006 FBD5     		bpl	.L12
+  12:main.c        ****   U0THR = ch;
+  58              		.loc 1 12 0
+  59 0008 024B     		ldr	r3, .L17+4
+  13:main.c        **** }
+  60              		.loc 1 13 0
+  61              		@ sp needed for prologue
+  62              		.loc 1 12 0
+  63 000a 1860     		str	r0, [r3]
+  64              		.loc 1 13 0
+  65 000c 7047     		bx	lr
+  66              	.L18:
+  67 000e 0000     		.align	2
+  68              	.L17:
+  69 0010 14C000E0 		.word	-536821740
+  70 0014 00C000E0 		.word	-536821760
+  71              	.LFE3:
+  73              		.section	.text.string_tx,"ax",%progbits
+  74              		.align	2
+  75              		.global	string_tx
+  76              		.code 16
+  77              		.thumb_func
+  79              	string_tx:
+  80              	.LFB4:
+  14:main.c        **** // serial transmission routine for string of characters
+  15:main.c        **** void string_tx(char *a)
+  16:main.c        **** {
+  81              		.loc 1 16 0
+  82              	.LVL1:
+  83              		@ lr needed for prologue
+  84 0000 06E0     		b	.L20
+  85              	.L25:
+  17:main.c        ****       while(*a!='\0')
+  18:main.c        ****       {
+  19:main.c        ****         while((U0LSR&0X20)!=0X20);
+  86              		.loc 1 19 0
+  87 0002 054B     		ldr	r3, .L28
+  88 0004 1B68     		ldr	r3, [r3]
+  89 0006 9906     		lsl	r1, r3, #26
+  90 0008 FBD5     		bpl	.L25
+  20:main.c        ****         U0THR=*a;  
+  91              		.loc 1 20 0
+  92 000a 044B     		ldr	r3, .L28+4
+  93 000c 1A60     		str	r2, [r3]
+  21:main.c        ****         a++;
+  94              		.loc 1 21 0
+  95 000e 0130     		add	r0, r0, #1
+  96              	.LVL2:
+  97              	.L20:
+  98              		.loc 1 17 0
+  99 0010 0278     		ldrb	r2, [r0]
+ 100 0012 002A     		cmp	r2, #0
+ 101 0014 F5D1     		bne	.L25
+  22:main.c        ****       }
+  23:main.c        **** }
+ 102              		.loc 1 23 0
+ 103              		@ sp needed for prologue
+ 104 0016 7047     		bx	lr
+ 105              	.L29:
+ 106              		.align	2
+ 107              	.L28:
+ 108 0018 14C000E0 		.word	-536821740
+ 109 001c 00C000E0 		.word	-536821760
+ 110              	.LFE4:
+ 112              		.section	.text.main,"ax",%progbits
+ 113              		.align	2
+ 114              		.global	main
+ 115              		.code 16
+ 116              		.thumb_func
+ 118              	main:
+ 119              	.LFB5:
+  24:main.c        **** /************************* main routine ***********************************************************
+  25:main.c        **** int  main ()
+  26:main.c        **** {
+ 120              		.loc 1 26 0
+ 121 0000 00B5     		push	{lr}
+ 122              	.LCFI0:
+  27:main.c        **** 	unsigned int Fdiv,temp;
+  28:main.c        **** 	unsigned char arr[] = "a";
+  29:main.c        **** 	init_timer( ((72000000/100) - 1) );
+ 123              		.loc 1 29 0
+ 124 0002 1248     		ldr	r0, .L42
+ 125 0004 FFF7FEFF 		bl	init_timer
+  30:main.c        **** 	/**************************** uart1 initialization ************************************/	
+  31:main.c        **** 	PINSEL0 = 0x00000050;   
+ 126              		.loc 1 31 0
+ 127 0008 114B     		ldr	r3, .L42+4
+ 128 000a 5022     		mov	r2, #80
+ 129 000c 1A60     		str	r2, [r3]
+  32:main.c        **** 	FIO3DIR=0x000000ff;
+ 130              		.loc 1 32 0
+ 131 000e 114B     		ldr	r3, .L42+8
+ 132 0010 FF22     		mov	r2, #255
+  33:main.c        **** 	
+  34:main.c        **** 	U0LCR = 0x83;               // 8 bits, no Parity, 1 Stop bit  
+ 133              		.loc 1 34 0
+ 134 0012 1149     		ldr	r1, .L42+12
+ 135              		.loc 1 32 0
+ 136 0014 1A60     		str	r2, [r3]
+ 137              		.loc 1 34 0
+ 138 0016 8323     		mov	r3, #131
+ 139 0018 0B60     		str	r3, [r1]
+  35:main.c        **** 	Fdiv = ( 72000000 / 16 ) / 19200 ;  //baud rate  
+  36:main.c        **** 	U0DLM = Fdiv / 256;
+ 140              		.loc 1 36 0
+ 141 001a 104B     		ldr	r3, .L42+16
+ 142 001c 0022     		mov	r2, #0
+ 143 001e 1A60     		str	r2, [r3]
+  37:main.c        **** 	U0DLL = Fdiv % 256;
+ 144              		.loc 1 37 0
+ 145 0020 043B     		sub	r3, r3, #4
+ 146 0022 EA22     		mov	r2, #234
+ 147 0024 1A60     		str	r2, [r3]
+  38:main.c        ****    	U0LCR = 0x03;               // DLAB = 0
+ 148              		.loc 1 38 0
+ 149 0026 0323     		mov	r3, #3
+ 150 0028 0B60     		str	r3, [r1]
+ 151              	.L41:
+ 152              	.LBB6:
+ 153              	.LBB7:
+ 154              		.loc 1 5 0
+ 155 002a 0D4B     		ldr	r3, .L42+20
+ 156 002c 1B68     		ldr	r3, [r3]
+ 157 002e D907     		lsl	r1, r3, #31
+ 158 0030 FBD5     		bpl	.L41
+ 159              		.loc 1 6 0
+ 160 0032 0C4B     		ldr	r3, .L42+24
+ 161 0034 1A68     		ldr	r2, [r3]
+ 162              	.LBE7:
+ 163              	.LBE6:
+  39:main.c        **** 
+  40:main.c        ****   	while(1) 
+  41:main.c        **** 	{
+  42:main.c        **** 	temp = serial_rx();
+  43:main.c        **** 	FIO3PIN=temp;
+ 164              		.loc 1 43 0
+ 165 0036 0C4B     		ldr	r3, .L42+28
+ 166 0038 1A60     		str	r2, [r3]
+ 167              	.L33:
+ 168              	.LBB8:
+ 169              	.LBB9:
+ 170              		.loc 1 11 0
+ 171 003a 094B     		ldr	r3, .L42+20
+ 172 003c 1B68     		ldr	r3, [r3]
+ 173 003e 9906     		lsl	r1, r3, #26
+ 174 0040 FBD5     		bpl	.L33
+ 175              		.loc 1 12 0
+ 176 0042 084B     		ldr	r3, .L42+24
+ 177              	.LBE9:
+ 178              	.LBE8:
+  44:main.c        **** 	serial_tx(temp+2);
+ 179              		.loc 1 44 0
+ 180 0044 0232     		add	r2, r2, #2
+ 181              	.LBB11:
+ 182              	.LBB10:
+ 183              		.loc 1 12 0
+ 184 0046 1A60     		str	r2, [r3]
+ 185 0048 EFE7     		b	.L41
+ 186              	.L43:
+ 187 004a 0000     		.align	2
+ 188              	.L42:
+ 189 004c 7FFC0A00 		.word	719999
+ 190 0050 00C002E0 		.word	-536690688
+ 191 0054 60C0FF3F 		.word	1073725536
+ 192 0058 0CC000E0 		.word	-536821748
+ 193 005c 04C000E0 		.word	-536821756
+ 194 0060 14C000E0 		.word	-536821740
+ 195 0064 00C000E0 		.word	-536821760
+ 196 0068 74C0FF3F 		.word	1073725556
+ 197              	.LBE10:
+ 198              	.LBE11:
+ 199              	.LFE5:
+ 255              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/ccpx4T9b.s:1      .text:00000000 $t
+     /tmp/ccpx4T9b.s:17     .text.serial_rx:00000000 serial_rx
+     /tmp/ccpx4T9b.s:14     .text.serial_rx:00000000 $t
+     /tmp/ccpx4T9b.s:37     .text.serial_rx:00000010 $d
+     /tmp/ccpx4T9b.s:47     .text.serial_tx:00000000 serial_tx
+     /tmp/ccpx4T9b.s:44     .text.serial_tx:00000000 $t
+     /tmp/ccpx4T9b.s:69     .text.serial_tx:00000010 $d
+     /tmp/ccpx4T9b.s:79     .text.string_tx:00000000 string_tx
+     /tmp/ccpx4T9b.s:76     .text.string_tx:00000000 $t
+     /tmp/ccpx4T9b.s:108    .text.string_tx:00000018 $d
+     /tmp/ccpx4T9b.s:118    .text.main:00000000 main
+     /tmp/ccpx4T9b.s:115    .text.main:00000000 $t
+     /tmp/ccpx4T9b.s:189    .text.main:0000004c $d
+
+UNDEFINED SYMBOLS
+init_timer

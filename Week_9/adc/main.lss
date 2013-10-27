@@ -3,29 +3,29 @@ main.elf:     file format elf32-littlearm
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         0000045c  00000000  00000000  00008000  2**2
+  0 .text         00000478  00000000  00000000  00008000  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .bss          00000004  40000000  40000000  0000845c  2**2
+  1 .bss          00000004  40000000  40000000  00008478  2**2
                   ALLOC
-  2 .stack        00000400  40000100  40000100  00008460  2**3
+  2 .stack        00000400  40000100  40000100  00008478  2**3
                   CONTENTS
-  3 .comment      00000086  00000000  00000000  00008860  2**0
+  3 .comment      00000086  00000000  00000000  00008878  2**0
                   CONTENTS, READONLY
-  4 .debug_aranges 000000d0  00000000  00000000  000088e8  2**3
+  4 .debug_aranges 000000d0  00000000  00000000  00008900  2**3
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_pubnames 000000ce  00000000  00000000  000089b8  2**0
+  5 .debug_pubnames 000000ce  00000000  00000000  000089d0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00000407  00000000  00000000  00008a86  2**0
+  6 .debug_info   00000405  00000000  00000000  00008a9e  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 000001c6  00000000  00000000  00008e8d  2**0
+  7 .debug_abbrev 000001c6  00000000  00000000  00008ea3  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   0000025e  00000000  00000000  00009053  2**0
+  8 .debug_line   00000265  00000000  00000000  00009069  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  000000e8  00000000  00000000  000092b4  2**2
+  9 .debug_frame  000000e8  00000000  00000000  000092d0  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000163  00000000  00000000  0000939c  2**0
+ 10 .debug_str    00000163  00000000  00000000  000093b8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00000207  00000000  00000000  000094ff  2**0
+ 11 .debug_loc    000001f4  00000000  00000000  0000951b  2**0
                   CONTENTS, READONLY, DEBUGGING
 Disassembly of section .text:
 
@@ -337,10 +337,10 @@ IRQ_Handler:
             ldmia       sp!, {pc}^
  13c:	e8fd8000 	ldmia	sp!, {pc}^
  140:	40000500 	andmi	r0, r0, r0, lsl #10
- 144:	00000375 	andeq	r0, r0, r5, ror r3
- 148:	0000045c 	andeq	r0, r0, ip, asr r4
+ 144:	00000391 	muleq	r0, r1, r3
+ 148:	00000478 	andeq	r0, r0, r8, ror r4
  14c:	40000000 	andmi	r0, r0, r0
- 150:	0000045c 	andeq	r0, r0, ip, asr r4
+ 150:	00000478 	andeq	r0, r0, r8, ror r4
  154:	40000000 	andmi	r0, r0, r0
  158:	40000004 	andmi	r0, r0, r4
  15c:	000001d9 	ldreqd	r0, [r0], -r9
@@ -462,175 +462,195 @@ int  main ()
  1d8:	b500      	push	{lr}
 	unsigned int Fdiv,value;
 	init_timer( ((72000000/100) - 1) );
- 1da:	4832      	ldr	r0, [pc, #200]	(2a4 <.text+0x2a4>)
- 1dc:	f000 f8aa 	bl	334 <init_timer>
+ 1da:	4837      	ldr	r0, [pc, #220]	(2b8 <.text+0x2b8>)
+ 1dc:	f000 f8b8 	bl	350 <init_timer>
 
 	PCONP |=0X00001000;		//switch adc from disable state to enable state  
- 1e0:	4931      	ldr	r1, [pc, #196]	(2a8 <.text+0x2a8>)
+ 1e0:	4936      	ldr	r1, [pc, #216]	(2bc <.text+0x2bc>)
  1e2:	2380      	movs	r3, #128
  1e4:	680a      	ldr	r2, [r1, #0]
  1e6:	015b      	lsls	r3, r3, #5
  1e8:	431a      	orrs	r2, r3
 	PINSEL0 = 0x00000050; 		//Pinselection for uart tx and rx lines
- 1ea:	4b30      	ldr	r3, [pc, #192]	(2ac <.text+0x2ac>)
+ 1ea:	4b35      	ldr	r3, [pc, #212]	(2c0 <.text+0x2c0>)
  1ec:	600a      	str	r2, [r1, #0]
  1ee:	2250      	movs	r2, #80
  1f0:	601a      	str	r2, [r3, #0]
 	PINSEL1	= 0X01554000;		//Pinselection for adc0.0 
- 1f2:	4a2f      	ldr	r2, [pc, #188]	(2b0 <.text+0x2b0>)
+ 1f2:	4a34      	ldr	r2, [pc, #208]	(2c4 <.text+0x2c4>)
  1f4:	3304      	adds	r3, #4
 
 	/************** Uart initialization **********************************/
 
 	U0LCR = 0x83;               // 8 bits, no Parity, 1 Stop bit  
- 1f6:	492f      	ldr	r1, [pc, #188]	(2b4 <.text+0x2b4>)
+ 1f6:	4834      	ldr	r0, [pc, #208]	(2c8 <.text+0x2c8>)
  1f8:	601a      	str	r2, [r3, #0]
  1fa:	2383      	movs	r3, #131
- 1fc:	600b      	str	r3, [r1, #0]
+ 1fc:	6003      	str	r3, [r0, #0]
 	Fdiv = ( 72000000 / 16 ) / 19200 ;  //baud rate  
 	U0DLM = Fdiv / 256;
- 1fe:	4b2e      	ldr	r3, [pc, #184]	(2b8 <.text+0x2b8>)
- 200:	2200      	movs	r2, #0
- 202:	601a      	str	r2, [r3, #0]
+ 1fe:	4b33      	ldr	r3, [pc, #204]	(2cc <.text+0x2cc>)
+ 200:	2100      	movs	r1, #0
+ 202:	6019      	str	r1, [r3, #0]
 	U0DLL = Fdiv % 256;
  204:	22ea      	movs	r2, #234
  206:	3b04      	subs	r3, #4
  208:	601a      	str	r2, [r3, #0]
    	U0LCR = 0x03;               // DLAB = 0
  20a:	2303      	movs	r3, #3
- 20c:	600b      	str	r3, [r1, #0]
+ 20c:	6003      	str	r3, [r0, #0]
+   	
+   	FIO4DIR=0x00;
+ 20e:	4b30      	ldr	r3, [pc, #192]	(2d0 <.text+0x2d0>)
+	FIO3DIR=0xFF;
+ 210:	22ff      	movs	r2, #255
+ 212:	6019      	str	r1, [r3, #0]
+ 214:	3b20      	subs	r3, #32
+ 216:	601a      	str	r2, [r3, #0]
 	
   	AD0CR = 0X01210F01; // Adc initialization
- 20e:	4a2b      	ldr	r2, [pc, #172]	(2bc <.text+0x2bc>)
- 210:	4b2b      	ldr	r3, [pc, #172]	(2c0 <.text+0x2c0>)
- 212:	601a      	str	r2, [r3, #0]
+ 218:	4a2e      	ldr	r2, [pc, #184]	(2d4 <.text+0x2d4>)
+ 21a:	4b2f      	ldr	r3, [pc, #188]	(2d8 <.text+0x2d8>)
+ 21c:	601a      	str	r2, [r3, #0]
 	while(1) 
 	{
 		while((AD0DR0 & 0X80000000)!=0X80000000);	// Wait here until adc make conversion complete
- 214:	4a2b      	ldr	r2, [pc, #172]	(2c4 <.text+0x2c4>)
- 216:	6813      	ldr	r3, [r2, #0]
- 218:	2b00      	cmp	r3, #0
- 21a:	dafb      	bge.n	214 <USR_Stack_Size+0x14>
+ 21e:	4a2f      	ldr	r2, [pc, #188]	(2dc <.text+0x2dc>)
+ 220:	6813      	ldr	r3, [r2, #0]
+ 222:	2b00      	cmp	r3, #0
+ 224:	dafb      	bge.n	21e <USR_Stack_Size+0x1e>
 	
 		/************* To get converted value and display it on the serial port****************/
             	value = (AD0DR0>>6)& 0x3ff ;    
- 21c:	6813      	ldr	r3, [r2, #0]
- 21e:	041b      	lsls	r3, r3, #16
- 220:	0d99      	lsrs	r1, r3, #22
- 222:	4b29      	ldr	r3, [pc, #164]	(2c8 <.text+0x2c8>)
- 224:	681b      	ldr	r3, [r3, #0]
- 226:	0698      	lsls	r0, r3, #26
- 228:	d5fb      	bpl.n	222 <USR_Stack_Size+0x22>
- 22a:	4b28      	ldr	r3, [pc, #160]	(2cc <.text+0x2cc>)
- 22c:	2209      	movs	r2, #9
- 22e:	601a      	str	r2, [r3, #0]
+ 226:	6813      	ldr	r3, [r2, #0]
+ 228:	041b      	lsls	r3, r3, #16
+ 22a:	0d99      	lsrs	r1, r3, #22
+ 22c:	4b2c      	ldr	r3, [pc, #176]	(2e0 <.text+0x2e0>)
+ 22e:	681b      	ldr	r3, [r3, #0]
+ 230:	0698      	lsls	r0, r3, #26
+ 232:	d5fb      	bpl.n	22c <USR_Stack_Size+0x2c>
+ 234:	4b2b      	ldr	r3, [pc, #172]	(2e4 <.text+0x2e4>)
+ 236:	2209      	movs	r2, #9
+ 238:	601a      	str	r2, [r3, #0]
 		serial_tx('\t');
 		serial_tx(atoh((value&0x300)>>8));
- 230:	0a0b      	lsrs	r3, r1, #8
- 232:	2b09      	cmp	r3, #9
- 234:	dc02      	bgt.n	23c <USR_Stack_Size+0x3c>
- 236:	1c1a      	adds	r2, r3, #0
- 238:	3230      	adds	r2, #48
- 23a:	e001      	b.n	240 <USR_Stack_Size+0x40>
- 23c:	1c1a      	adds	r2, r3, #0
- 23e:	3237      	adds	r2, #55
- 240:	4b21      	ldr	r3, [pc, #132]	(2c8 <.text+0x2c8>)
- 242:	681b      	ldr	r3, [r3, #0]
- 244:	0698      	lsls	r0, r3, #26
- 246:	d5fb      	bpl.n	240 <USR_Stack_Size+0x40>
- 248:	4b20      	ldr	r3, [pc, #128]	(2cc <.text+0x2cc>)
- 24a:	601a      	str	r2, [r3, #0]
+ 23a:	0a0b      	lsrs	r3, r1, #8
+ 23c:	2b09      	cmp	r3, #9
+ 23e:	dc02      	bgt.n	246 <USR_Stack_Size+0x46>
+ 240:	1c1a      	adds	r2, r3, #0
+ 242:	3230      	adds	r2, #48
+ 244:	e001      	b.n	24a <USR_Stack_Size+0x4a>
+ 246:	1c1a      	adds	r2, r3, #0
+ 248:	3237      	adds	r2, #55
+ 24a:	4b25      	ldr	r3, [pc, #148]	(2e0 <.text+0x2e0>)
+ 24c:	681b      	ldr	r3, [r3, #0]
+ 24e:	0698      	lsls	r0, r3, #26
+ 250:	d5fb      	bpl.n	24a <USR_Stack_Size+0x4a>
+ 252:	4b24      	ldr	r3, [pc, #144]	(2e4 <.text+0x2e4>)
+ 254:	601a      	str	r2, [r3, #0]
 		serial_tx(atoh((value&0xf0)>>4));
- 24c:	060b      	lsls	r3, r1, #24
- 24e:	0f1b      	lsrs	r3, r3, #28
- 250:	2b09      	cmp	r3, #9
- 252:	dc02      	bgt.n	25a <USR_Stack_Size+0x5a>
- 254:	1c1a      	adds	r2, r3, #0
- 256:	3230      	adds	r2, #48
- 258:	e001      	b.n	25e <USR_Stack_Size+0x5e>
- 25a:	1c1a      	adds	r2, r3, #0
- 25c:	3237      	adds	r2, #55
- 25e:	4b1a      	ldr	r3, [pc, #104]	(2c8 <.text+0x2c8>)
- 260:	681b      	ldr	r3, [r3, #0]
- 262:	0698      	lsls	r0, r3, #26
- 264:	d5fb      	bpl.n	25e <USR_Stack_Size+0x5e>
- 266:	4b19      	ldr	r3, [pc, #100]	(2cc <.text+0x2cc>)
- 268:	601a      	str	r2, [r3, #0]
+ 256:	060b      	lsls	r3, r1, #24
+ 258:	0f1b      	lsrs	r3, r3, #28
+ 25a:	2b09      	cmp	r3, #9
+ 25c:	dc02      	bgt.n	264 <USR_Stack_Size+0x64>
+ 25e:	1c1a      	adds	r2, r3, #0
+ 260:	3230      	adds	r2, #48
+ 262:	e001      	b.n	268 <USR_Stack_Size+0x68>
+ 264:	1c1a      	adds	r2, r3, #0
+ 266:	3237      	adds	r2, #55
+ 268:	4b1d      	ldr	r3, [pc, #116]	(2e0 <.text+0x2e0>)
+ 26a:	681b      	ldr	r3, [r3, #0]
+ 26c:	0698      	lsls	r0, r3, #26
+ 26e:	d5fb      	bpl.n	268 <USR_Stack_Size+0x68>
+ 270:	4b1c      	ldr	r3, [pc, #112]	(2e4 <.text+0x2e4>)
+ 272:	601a      	str	r2, [r3, #0]
 		serial_tx(atoh(value&0x0f));
- 26a:	230f      	movs	r3, #15
- 26c:	400b      	ands	r3, r1
- 26e:	2b09      	cmp	r3, #9
- 270:	dc02      	bgt.n	278 <USR_Stack_Size+0x78>
- 272:	1c1a      	adds	r2, r3, #0
- 274:	3230      	adds	r2, #48
- 276:	e001      	b.n	27c <USR_Stack_Size+0x7c>
- 278:	1c1a      	adds	r2, r3, #0
- 27a:	3237      	adds	r2, #55
- 27c:	4b12      	ldr	r3, [pc, #72]	(2c8 <.text+0x2c8>)
- 27e:	681b      	ldr	r3, [r3, #0]
- 280:	0699      	lsls	r1, r3, #26
- 282:	d5fb      	bpl.n	27c <USR_Stack_Size+0x7c>
- 284:	4b11      	ldr	r3, [pc, #68]	(2cc <.text+0x2cc>)
- 286:	601a      	str	r2, [r3, #0]
- 288:	4b0f      	ldr	r3, [pc, #60]	(2c8 <.text+0x2c8>)
- 28a:	681b      	ldr	r3, [r3, #0]
- 28c:	069a      	lsls	r2, r3, #26
- 28e:	d5fb      	bpl.n	288 <USR_Stack_Size+0x88>
- 290:	4b0e      	ldr	r3, [pc, #56]	(2cc <.text+0x2cc>)
- 292:	220d      	movs	r2, #13
- 294:	601a      	str	r2, [r3, #0]
- 296:	4b0c      	ldr	r3, [pc, #48]	(2c8 <.text+0x2c8>)
- 298:	681b      	ldr	r3, [r3, #0]
- 29a:	0698      	lsls	r0, r3, #26
- 29c:	d5fb      	bpl.n	296 <USR_Stack_Size+0x96>
- 29e:	4b0b      	ldr	r3, [pc, #44]	(2cc <.text+0x2cc>)
- 2a0:	220a      	movs	r2, #10
- 2a2:	e7b6      	b.n	212 <USR_Stack_Size+0x12>
- 2a4:	fc7f 000a 	ldc2l	0, cr0, [pc], #-40
- 2a8:	c0c4      	stmia	r0!, {r2, r6, r7}
- 2aa:	e01f      	b.n	2ec <install_irq+0x1c>
- 2ac:	c000      	stmia	r0!, {}
- 2ae:	e002      	b.n	2b6 <.text+0x2b6>
- 2b0:	4000      	ands	r0, r0
- 2b2:	0155      	lsls	r5, r2, #5
- 2b4:	c00c      	stmia	r0!, {r2, r3}
- 2b6:	e000      	b.n	2ba <.text+0x2ba>
- 2b8:	c004      	stmia	r0!, {r2}
- 2ba:	e000      	b.n	2be <.text+0x2be>
- 2bc:	0f01      	lsrs	r1, r0, #28
- 2be:	0121      	lsls	r1, r4, #4
- 2c0:	4000      	ands	r0, r0
- 2c2:	e003      	b.n	2cc <.text+0x2cc>
- 2c4:	4010      	ands	r0, r2
- 2c6:	e003      	b.n	2d0 <install_irq>
- 2c8:	c014      	stmia	r0!, {r2, r4}
+ 274:	230f      	movs	r3, #15
+ 276:	400b      	ands	r3, r1
+ 278:	2b09      	cmp	r3, #9
+ 27a:	dc02      	bgt.n	282 <USR_Stack_Size+0x82>
+ 27c:	1c1a      	adds	r2, r3, #0
+ 27e:	3230      	adds	r2, #48
+ 280:	e001      	b.n	286 <USR_Stack_Size+0x86>
+ 282:	1c1a      	adds	r2, r3, #0
+ 284:	3237      	adds	r2, #55
+ 286:	4b16      	ldr	r3, [pc, #88]	(2e0 <.text+0x2e0>)
+ 288:	681b      	ldr	r3, [r3, #0]
+ 28a:	0698      	lsls	r0, r3, #26
+ 28c:	d5fb      	bpl.n	286 <USR_Stack_Size+0x86>
+ 28e:	4b15      	ldr	r3, [pc, #84]	(2e4 <.text+0x2e4>)
+ 290:	601a      	str	r2, [r3, #0]
+ 292:	4b13      	ldr	r3, [pc, #76]	(2e0 <.text+0x2e0>)
+ 294:	681b      	ldr	r3, [r3, #0]
+ 296:	069a      	lsls	r2, r3, #26
+ 298:	d5fb      	bpl.n	292 <USR_Stack_Size+0x92>
+ 29a:	4b12      	ldr	r3, [pc, #72]	(2e4 <.text+0x2e4>)
+ 29c:	220d      	movs	r2, #13
+ 29e:	601a      	str	r2, [r3, #0]
+ 2a0:	4b0f      	ldr	r3, [pc, #60]	(2e0 <.text+0x2e0>)
+ 2a2:	681b      	ldr	r3, [r3, #0]
+ 2a4:	0698      	lsls	r0, r3, #26
+ 2a6:	d5fb      	bpl.n	2a0 <USR_Stack_Size+0xa0>
+ 2a8:	4b0e      	ldr	r3, [pc, #56]	(2e4 <.text+0x2e4>)
+ 2aa:	220a      	movs	r2, #10
+ 2ac:	601a      	str	r2, [r3, #0]
+		serial_tx(0x0d);
+		serial_tx(0x0a);
+		FIO3PIN=value&0x03f;
+ 2ae:	233f      	movs	r3, #63
+ 2b0:	1c0a      	adds	r2, r1, #0
+ 2b2:	401a      	ands	r2, r3
+ 2b4:	4b0c      	ldr	r3, [pc, #48]	(2e8 <.text+0x2e8>)
+ 2b6:	e7b1      	b.n	21c <USR_Stack_Size+0x1c>
+ 2b8:	fc7f 000a 	ldc2l	0, cr0, [pc], #-40
+ 2bc:	c0c4      	stmia	r0!, {r2, r6, r7}
+ 2be:	e01f      	b.n	300 <install_irq+0x14>
+ 2c0:	c000      	stmia	r0!, {}
+ 2c2:	e002      	b.n	2ca <.text+0x2ca>
+ 2c4:	4000      	ands	r0, r0
+ 2c6:	0155      	lsls	r5, r2, #5
+ 2c8:	c00c      	stmia	r0!, {r2, r3}
  2ca:	e000      	b.n	2ce <.text+0x2ce>
- 2cc:	c000      	stmia	r0!, {}
- 2ce:	e000      	b.n	2d2 <install_irq+0x2>
+ 2cc:	c004      	stmia	r0!, {r2}
+ 2ce:	e000      	b.n	2d2 <.text+0x2d2>
+ 2d0:	c080      	stmia	r0!, {r7}
+ 2d2:	3fff      	subs	r7, #255
+ 2d4:	0f01      	lsrs	r1, r0, #28
+ 2d6:	0121      	lsls	r1, r4, #4
+ 2d8:	4000      	ands	r0, r0
+ 2da:	e003      	b.n	2e4 <.text+0x2e4>
+ 2dc:	4010      	ands	r0, r2
+ 2de:	e003      	b.n	2e8 <.text+0x2e8>
+ 2e0:	c014      	stmia	r0!, {r2, r4}
+ 2e2:	e000      	b.n	2e6 <.text+0x2e6>
+ 2e4:	c000      	stmia	r0!, {}
+ 2e6:	e000      	b.n	2ea <.text+0x2ea>
+ 2e8:	c074      	stmia	r0!, {r2, r4, r5, r6}
+ 2ea:	3fff      	subs	r7, #255
 
-000002d0 <install_irq>:
+000002ec <install_irq>:
 ** Returned value:		true or false, return false if IntNum is out of range
 ** 
 ******************************************************************************/
 int install_irq( int IntNumber, void *HandlerAddr, int Priority )
 {
- 2d0:	b530      	push	{r4, r5, lr}
+ 2ec:	b530      	push	{r4, r5, lr}
     int *vect_addr;
     int *vect_cntl;
       
     VICIntEnClr = 1 << IntNumber;	/* Disable Interrupt */
- 2d2:	2301      	movs	r3, #1
- 2d4:	1c0c      	adds	r4, r1, #0
- 2d6:	1c19      	adds	r1, r3, #0
- 2d8:	4b09      	ldr	r3, [pc, #36]	(300 <.text+0x300>)
- 2da:	4081      	lsls	r1, r0
- 2dc:	1c15      	adds	r5, r2, #0
- 2de:	6019      	str	r1, [r3, #0]
+ 2ee:	2301      	movs	r3, #1
+ 2f0:	1c0c      	adds	r4, r1, #0
+ 2f2:	1c19      	adds	r1, r3, #0
+ 2f4:	4b09      	ldr	r3, [pc, #36]	(31c <.text+0x31c>)
+ 2f6:	4081      	lsls	r1, r0
+ 2f8:	1c15      	adds	r5, r2, #0
+ 2fa:	6019      	str	r1, [r3, #0]
     if ( IntNumber >= 32 )
- 2e0:	281f      	cmp	r0, #31
- 2e2:	dd01      	ble.n	2e8 <install_irq+0x18>
- 2e4:	2000      	movs	r0, #0
- 2e6:	e007      	b.n	2f8 <install_irq+0x28>
+ 2fc:	281f      	cmp	r0, #31
+ 2fe:	dd01      	ble.n	304 <install_irq+0x18>
+ 300:	2000      	movs	r0, #0
+ 302:	e007      	b.n	314 <install_irq+0x28>
     {
 		return ( FALSE );
     }
@@ -640,29 +660,29 @@ int install_irq( int IntNumber, void *HandlerAddr, int Priority )
 		vect_addr = (int *)(VIC_BASE_ADDR + VECT_ADDR_INDEX + IntNumber*4);
 		vect_cntl = (int *)(VIC_BASE_ADDR + VECT_CNTL_INDEX + IntNumber*4);
 		*vect_addr = (int)HandlerAddr;	/* set interrupt vector */
- 2e8:	4b06      	ldr	r3, [pc, #24]	(304 <.text+0x304>)
- 2ea:	0082      	lsls	r2, r0, #2
- 2ec:	50d4      	str	r4, [r2, r3]
+ 304:	4b06      	ldr	r3, [pc, #24]	(320 <.text+0x320>)
+ 306:	0082      	lsls	r2, r0, #2
+ 308:	50d4      	str	r4, [r2, r3]
 		*vect_cntl = Priority;
- 2ee:	4b06      	ldr	r3, [pc, #24]	(308 <.text+0x308>)
- 2f0:	50d5      	str	r5, [r2, r3]
+ 30a:	4b06      	ldr	r3, [pc, #24]	(324 <.text+0x324>)
+ 30c:	50d5      	str	r5, [r2, r3]
 		VICIntEnable = 1 << IntNumber;	/* Enable Interrupt */
- 2f2:	4b06      	ldr	r3, [pc, #24]	(30c <.text+0x30c>)
- 2f4:	6019      	str	r1, [r3, #0]
- 2f6:	2001      	movs	r0, #1
+ 30e:	4b06      	ldr	r3, [pc, #24]	(328 <.text+0x328>)
+ 310:	6019      	str	r1, [r3, #0]
+ 312:	2001      	movs	r0, #1
 		return( TRUE );
     }
 }
- 2f8:	bc30      	pop	{r4, r5}
- 2fa:	bc02      	pop	{r1}
- 2fc:	4708      	bx	r1
- 2fe:	0000      	lsls	r0, r0, #0
- 300:	f014 ffff 	bl	15302 <VIC_VectAddr+0x14402>
- 304:	f100 ffff 	bl	101306 <VIC_VectAddr+0x100406>
- 308:	f200 ffff 	bl	20130a <VIC_VectAddr+0x20040a>
- 30c:	f010 ffff 	bl	1130e <VIC_VectAddr+0x1040e>
+ 314:	bc30      	pop	{r4, r5}
+ 316:	bc02      	pop	{r1}
+ 318:	4708      	bx	r1
+ 31a:	0000      	lsls	r0, r0, #0
+ 31c:	f014 ffff 	bl	1531e <VIC_VectAddr+0x1441e>
+ 320:	f100 ffff 	bl	101322 <VIC_VectAddr+0x100422>
+ 324:	f200 ffff 	bl	201326 <VIC_VectAddr+0x200426>
+ 328:	f010 ffff 	bl	1132a <VIC_VectAddr+0x1042a>
 
-00000310 <Timer0Handler>:
+0000032c <Timer0Handler>:
 
 /******************************************************************************
 ** Function name:		Timer0Handler
@@ -680,32 +700,32 @@ void Timer0Handler (void); // avoid missing proto warning - mthomas
 void Timer0Handler (void) __irq 
 {  
     T0IR = 1;			/* clear interrupt flag */
- 310:	4b05      	ldr	r3, [pc, #20]	(328 <.text+0x328>)
- 312:	2201      	movs	r2, #1
- 314:	601a      	str	r2, [r3, #0]
+ 32c:	4b05      	ldr	r3, [pc, #20]	(344 <.text+0x344>)
+ 32e:	2201      	movs	r2, #1
+ 330:	601a      	str	r2, [r3, #0]
     IENABLE;			/* handles nested interrupt */
 
     timer_counter++;
- 316:	4a05      	ldr	r2, [pc, #20]	(32c <.text+0x32c>)
- 318:	6813      	ldr	r3, [r2, #0]
- 31a:	3301      	adds	r3, #1
- 31c:	6013      	str	r3, [r2, #0]
+ 332:	4a05      	ldr	r2, [pc, #20]	(348 <.text+0x348>)
+ 334:	6813      	ldr	r3, [r2, #0]
+ 336:	3301      	adds	r3, #1
+ 338:	6013      	str	r3, [r2, #0]
 
     IDISABLE;
     VICVectAddr = 0;		/* Acknowledge Interrupt */
- 31e:	4b04      	ldr	r3, [pc, #16]	(330 <.text+0x330>)
- 320:	2200      	movs	r2, #0
- 322:	601a      	str	r2, [r3, #0]
+ 33a:	4b04      	ldr	r3, [pc, #16]	(34c <.text+0x34c>)
+ 33c:	2200      	movs	r2, #0
+ 33e:	601a      	str	r2, [r3, #0]
 }
- 324:	4770      	bx	lr
- 326:	0000      	lsls	r0, r0, #0
- 328:	4000      	ands	r0, r0
- 32a:	e000      	b.n	32e <.text+0x32e>
- 32c:	0000      	lsls	r0, r0, #0
- 32e:	4000      	ands	r0, r0
- 330:	ff00 ffff 	undefined
+ 340:	4770      	bx	lr
+ 342:	0000      	lsls	r0, r0, #0
+ 344:	4000      	ands	r0, r0
+ 346:	e000      	b.n	34a <.text+0x34a>
+ 348:	0000      	lsls	r0, r0, #0
+ 34a:	4000      	ands	r0, r0
+ 34c:	ff00 ffff 	undefined
 
-00000334 <init_timer>:
+00000350 <init_timer>:
 
 /******************************************************************************
 ** Function name:		enable_timer
@@ -792,32 +812,32 @@ void reset_timer( char timer_num )
 ******************************************************************************/
 int init_timer ( int TimerInterval ) 
 {
- 334:	b500      	push	{lr}
+ 350:	b500      	push	{lr}
     timer_counter = 0;
- 336:	4a0c      	ldr	r2, [pc, #48]	(368 <.text+0x368>)
- 338:	2300      	movs	r3, #0
- 33a:	6013      	str	r3, [r2, #0]
+ 352:	4a0c      	ldr	r2, [pc, #48]	(384 <.text+0x384>)
+ 354:	2300      	movs	r3, #0
+ 356:	6013      	str	r3, [r2, #0]
     T0MR0 = TimerInterval;
- 33c:	4b0b      	ldr	r3, [pc, #44]	(36c <.text+0x36c>)
+ 358:	4b0b      	ldr	r3, [pc, #44]	(388 <.text+0x388>)
     T0MCR = 3;				/* Interrupt and Reset on MR0*/ 
- 33e:	2203      	movs	r2, #3
- 340:	6018      	str	r0, [r3, #0]
- 342:	3b04      	subs	r3, #4
- 344:	601a      	str	r2, [r3, #0]
+ 35a:	2203      	movs	r2, #3
+ 35c:	6018      	str	r0, [r3, #0]
+ 35e:	3b04      	subs	r3, #4
+ 360:	601a      	str	r2, [r3, #0]
     if ( install_irq( 4, (void *)Timer0Handler, 0x01 ) == FALSE )
- 346:	490a      	ldr	r1, [pc, #40]	(370 <.text+0x370>)
- 348:	2201      	movs	r2, #1
- 34a:	2004      	movs	r0, #4
- 34c:	f7ff ffc0 	bl	2d0 <install_irq>
- 350:	2200      	movs	r2, #0
- 352:	2800      	cmp	r0, #0
- 354:	d100      	bne.n	358 <init_timer+0x24>
- 356:	2201      	movs	r2, #1
- 358:	2301      	movs	r3, #1
- 35a:	1c10      	adds	r0, r2, #0
- 35c:	4058      	eors	r0, r3
- 35e:	0600      	lsls	r0, r0, #24
- 360:	0e00      	lsrs	r0, r0, #24
+ 362:	490a      	ldr	r1, [pc, #40]	(38c <.text+0x38c>)
+ 364:	2201      	movs	r2, #1
+ 366:	2004      	movs	r0, #4
+ 368:	f7ff ffc0 	bl	2ec <install_irq>
+ 36c:	2200      	movs	r2, #0
+ 36e:	2800      	cmp	r0, #0
+ 370:	d100      	bne.n	374 <init_timer+0x24>
+ 372:	2201      	movs	r2, #1
+ 374:	2301      	movs	r3, #1
+ 376:	1c10      	adds	r0, r2, #0
+ 378:	4058      	eors	r0, r3
+ 37a:	0600      	lsls	r0, r0, #24
+ 37c:	0e00      	lsrs	r0, r0, #24
     {
 		return (FALSE);
     }
@@ -826,169 +846,169 @@ int init_timer ( int TimerInterval )
 		return (TRUE);
     }
 }
- 362:	bc02      	pop	{r1}
- 364:	4708      	bx	r1
- 366:	0000      	lsls	r0, r0, #0
- 368:	0000      	lsls	r0, r0, #0
- 36a:	4000      	ands	r0, r0
- 36c:	4018      	ands	r0, r3
- 36e:	e000      	b.n	372 <.text+0x372>
- 370:	0311      	lsls	r1, r2, #12
+ 37e:	bc02      	pop	{r1}
+ 380:	4708      	bx	r1
+ 382:	0000      	lsls	r0, r0, #0
+ 384:	0000      	lsls	r0, r0, #0
+ 386:	4000      	ands	r0, r0
+ 388:	4018      	ands	r0, r3
+ 38a:	e000      	b.n	38e <.text+0x38e>
+ 38c:	032d      	lsls	r5, r5, #12
 	...
 
-00000374 <TargetResetInit>:
+00000390 <TargetResetInit>:
 
 /**********************************************************************************************************
 			Routine to set processor and pheripheral clock 
 ***********************************************************************************************************/
 void  TargetResetInit(void)
 {
- 374:	b530      	push	{r4, r5, lr}
+ 390:	b530      	push	{r4, r5, lr}
   // 72 Mhz Frequency
   if ((PLLSTAT & 0x02000000) > 0)
- 376:	4b2e      	ldr	r3, [pc, #184]	(430 <.text+0x430>)
- 378:	681b      	ldr	r3, [r3, #0]
- 37a:	019a      	lsls	r2, r3, #6
- 37c:	d509      	bpl.n	392 <TargetResetInit+0x1e>
+ 392:	4b2e      	ldr	r3, [pc, #184]	(44c <.text+0x44c>)
+ 394:	681b      	ldr	r3, [r3, #0]
+ 396:	019a      	lsls	r2, r3, #6
+ 398:	d509      	bpl.n	3ae <TargetResetInit+0x1e>
   {
       /* If the PLL is already running   */
       PLLCON  &= ~0x02;                          /* Disconnect the PLL                                       */
- 37e:	492d      	ldr	r1, [pc, #180]	(434 <.text+0x434>)
- 380:	680b      	ldr	r3, [r1, #0]
- 382:	2202      	movs	r2, #2
- 384:	4393      	bics	r3, r2
+ 39a:	492d      	ldr	r1, [pc, #180]	(450 <.text+0x450>)
+ 39c:	680b      	ldr	r3, [r1, #0]
+ 39e:	2202      	movs	r2, #2
+ 3a0:	4393      	bics	r3, r2
       PLLFEED  =  0xAA;                          /* PLL register update sequence, 0xAA, 0x55                 */
- 386:	4a2c      	ldr	r2, [pc, #176]	(438 <.text+0x438>)
- 388:	600b      	str	r3, [r1, #0]
- 38a:	23aa      	movs	r3, #170
- 38c:	6013      	str	r3, [r2, #0]
+ 3a2:	4a2c      	ldr	r2, [pc, #176]	(454 <.text+0x454>)
+ 3a4:	600b      	str	r3, [r1, #0]
+ 3a6:	23aa      	movs	r3, #170
+ 3a8:	6013      	str	r3, [r2, #0]
       PLLFEED  =  0x55;
- 38e:	2355      	movs	r3, #85
- 390:	6013      	str	r3, [r2, #0]
+ 3aa:	2355      	movs	r3, #85
+ 3ac:	6013      	str	r3, [r2, #0]
   }
   PLLCON   &= ~0x01;                            /* Disable the PLL                                          */
- 392:	4928      	ldr	r1, [pc, #160]	(434 <.text+0x434>)
- 394:	680b      	ldr	r3, [r1, #0]
- 396:	2201      	movs	r2, #1
- 398:	4393      	bics	r3, r2
-  PLLFEED   =  0xAA;                           /* PLL register update sequence, 0xAA, 0x55                 */
- 39a:	4a27      	ldr	r2, [pc, #156]	(438 <.text+0x438>)
- 39c:	600b      	str	r3, [r1, #0]
- 39e:	23aa      	movs	r3, #170
- 3a0:	6013      	str	r3, [r2, #0]
-  PLLFEED   =  0x55;
- 3a2:	2355      	movs	r3, #85
- 3a4:	6013      	str	r3, [r2, #0]
-  SCS      &= ~0x10;                         /* OSCRANGE = 0, Main OSC is between 1 and 20 Mhz           */
- 3a6:	4925      	ldr	r1, [pc, #148]	(43c <.text+0x43c>)
- 3a8:	680b      	ldr	r3, [r1, #0]
- 3aa:	2210      	movs	r2, #16
- 3ac:	4393      	bics	r3, r2
- 3ae:	600b      	str	r3, [r1, #0]
-  SCS      |=  0x20;                         /* OSCEN = 1, Enable the main oscillator                    */
+ 3ae:	4928      	ldr	r1, [pc, #160]	(450 <.text+0x450>)
  3b0:	680b      	ldr	r3, [r1, #0]
- 3b2:	2220      	movs	r2, #32
- 3b4:	4313      	orrs	r3, r2
- 3b6:	600b      	str	r3, [r1, #0]
+ 3b2:	2201      	movs	r2, #1
+ 3b4:	4393      	bics	r3, r2
+  PLLFEED   =  0xAA;                           /* PLL register update sequence, 0xAA, 0x55                 */
+ 3b6:	4a27      	ldr	r2, [pc, #156]	(454 <.text+0x454>)
+ 3b8:	600b      	str	r3, [r1, #0]
+ 3ba:	23aa      	movs	r3, #170
+ 3bc:	6013      	str	r3, [r2, #0]
+  PLLFEED   =  0x55;
+ 3be:	2355      	movs	r3, #85
+ 3c0:	6013      	str	r3, [r2, #0]
+  SCS      &= ~0x10;                         /* OSCRANGE = 0, Main OSC is between 1 and 20 Mhz           */
+ 3c2:	4925      	ldr	r1, [pc, #148]	(458 <.text+0x458>)
+ 3c4:	680b      	ldr	r3, [r1, #0]
+ 3c6:	2210      	movs	r2, #16
+ 3c8:	4393      	bics	r3, r2
+ 3ca:	600b      	str	r3, [r1, #0]
+  SCS      |=  0x20;                         /* OSCEN = 1, Enable the main oscillator                    */
+ 3cc:	680b      	ldr	r3, [r1, #0]
+ 3ce:	2220      	movs	r2, #32
+ 3d0:	4313      	orrs	r3, r2
+ 3d2:	600b      	str	r3, [r1, #0]
   while ((SCS &  0x40) == 0);
- 3b8:	4b20      	ldr	r3, [pc, #128]	(43c <.text+0x43c>)
- 3ba:	681b      	ldr	r3, [r3, #0]
- 3bc:	065a      	lsls	r2, r3, #25
- 3be:	d5fb      	bpl.n	3b8 <TargetResetInit+0x44>
+ 3d4:	4b20      	ldr	r3, [pc, #128]	(458 <.text+0x458>)
+ 3d6:	681b      	ldr	r3, [r3, #0]
+ 3d8:	065a      	lsls	r2, r3, #25
+ 3da:	d5fb      	bpl.n	3d4 <TargetResetInit+0x44>
   CLKSRCSEL = 0x01;                         /* Select main OSC, 12MHz, as the PLL clock source          */
- 3c0:	4b1f      	ldr	r3, [pc, #124]	(440 <.text+0x440>)
- 3c2:	2501      	movs	r5, #1
+ 3dc:	4b1f      	ldr	r3, [pc, #124]	(45c <.text+0x45c>)
+ 3de:	2501      	movs	r5, #1
   PLLCFG    = (24 << 0) | (1 << 16);         /* Configure the PLL multiplier and divider                 */   
- 3c4:	4a1f      	ldr	r2, [pc, #124]	(444 <.text+0x444>)
- 3c6:	601d      	str	r5, [r3, #0]
- 3c8:	3b88      	subs	r3, #136
- 3ca:	601a      	str	r2, [r3, #0]
+ 3e0:	4a1f      	ldr	r2, [pc, #124]	(460 <.text+0x460>)
+ 3e2:	601d      	str	r5, [r3, #0]
+ 3e4:	3b88      	subs	r3, #136
+ 3e6:	601a      	str	r2, [r3, #0]
   PLLFEED   = 0xAA;                         /* PLL register update sequence, 0xAA, 0x55                 */
- 3cc:	4a1a      	ldr	r2, [pc, #104]	(438 <.text+0x438>)
- 3ce:	24aa      	movs	r4, #170
+ 3e8:	4a1a      	ldr	r2, [pc, #104]	(454 <.text+0x454>)
+ 3ea:	24aa      	movs	r4, #170
   PLLFEED   = 0x55;
- 3d0:	2055      	movs	r0, #85
- 3d2:	6014      	str	r4, [r2, #0]
+ 3ec:	2055      	movs	r0, #85
+ 3ee:	6014      	str	r4, [r2, #0]
   PLLCON   |= 0x01;                        /* Enable the PLL                                           */
- 3d4:	4917      	ldr	r1, [pc, #92]	(434 <.text+0x434>)
- 3d6:	6010      	str	r0, [r2, #0]
- 3d8:	680b      	ldr	r3, [r1, #0]
- 3da:	432b      	orrs	r3, r5
- 3dc:	600b      	str	r3, [r1, #0]
+ 3f0:	4917      	ldr	r1, [pc, #92]	(450 <.text+0x450>)
+ 3f2:	6010      	str	r0, [r2, #0]
+ 3f4:	680b      	ldr	r3, [r1, #0]
+ 3f6:	432b      	orrs	r3, r5
+ 3f8:	600b      	str	r3, [r1, #0]
   PLLFEED   = 0xAA;                        /* PLL register update sequence, 0xAA, 0x55                 */
   PLLFEED   = 0x55;
   CCLKCFG   = 3;                        /* Configure the ARM Core Processor clock divider           */
- 3de:	4b1a      	ldr	r3, [pc, #104]	(448 <.text+0x448>)
- 3e0:	6014      	str	r4, [r2, #0]
- 3e2:	6010      	str	r0, [r2, #0]
- 3e4:	2203      	movs	r2, #3
- 3e6:	601a      	str	r2, [r3, #0]
+ 3fa:	4b1a      	ldr	r3, [pc, #104]	(464 <.text+0x464>)
+ 3fc:	6014      	str	r4, [r2, #0]
+ 3fe:	6010      	str	r0, [r2, #0]
+ 400:	2203      	movs	r2, #3
+ 402:	601a      	str	r2, [r3, #0]
   USBCLKCFG = 5;                    /* Configure the USB clock divider                          */
- 3e8:	2205      	movs	r2, #5
- 3ea:	3304      	adds	r3, #4
- 3ec:	601a      	str	r2, [r3, #0]
+ 404:	2205      	movs	r2, #5
+ 406:	3304      	adds	r3, #4
+ 408:	601a      	str	r2, [r3, #0]
   while ((PLLSTAT & 0x04000000) == 0);  
- 3ee:	4b10      	ldr	r3, [pc, #64]	(430 <.text+0x430>)
- 3f0:	681b      	ldr	r3, [r3, #0]
- 3f2:	015a      	lsls	r2, r3, #5
- 3f4:	d5fb      	bpl.n	3ee <TargetResetInit+0x7a>
+ 40a:	4b10      	ldr	r3, [pc, #64]	(44c <.text+0x44c>)
+ 40c:	681b      	ldr	r3, [r3, #0]
+ 40e:	015a      	lsls	r2, r3, #5
+ 410:	d5fb      	bpl.n	40a <Stack_Size+0xa>
   PCLKSEL0  = 0xAAAAAAAA;                     /* Set peripheral clocks to be half of main clock           */
- 3f6:	4a15      	ldr	r2, [pc, #84]	(44c <.text+0x44c>)
- 3f8:	4b15      	ldr	r3, [pc, #84]	(450 <.text+0x450>)
- 3fa:	601a      	str	r2, [r3, #0]
+ 412:	4a15      	ldr	r2, [pc, #84]	(468 <.text+0x468>)
+ 414:	4b15      	ldr	r3, [pc, #84]	(46c <.text+0x46c>)
+ 416:	601a      	str	r2, [r3, #0]
   PCLKSEL1  = 0x22AAA8AA;
- 3fc:	4a15      	ldr	r2, [pc, #84]	(454 <.text+0x454>)
- 3fe:	3304      	adds	r3, #4
- 400:	601a      	str	r2, [r3, #0]
+ 418:	4a15      	ldr	r2, [pc, #84]	(470 <.text+0x470>)
+ 41a:	3304      	adds	r3, #4
+ 41c:	601a      	str	r2, [r3, #0]
   PLLCON   |= 0x02;                         /* Connect the PLL. The PLL is now the active clock source  */
- 402:	490c      	ldr	r1, [pc, #48]	(434 <.text+0x434>)
- 404:	680b      	ldr	r3, [r1, #0]
- 406:	2202      	movs	r2, #2
- 408:	4313      	orrs	r3, r2
+ 41e:	490c      	ldr	r1, [pc, #48]	(450 <.text+0x450>)
+ 420:	680b      	ldr	r3, [r1, #0]
+ 422:	2202      	movs	r2, #2
+ 424:	4313      	orrs	r3, r2
   PLLFEED   = 0xAA;                          /* PLL register update sequence, 0xAA, 0x55                 */
- 40a:	4a0b      	ldr	r2, [pc, #44]	(438 <.text+0x438>)
- 40c:	600b      	str	r3, [r1, #0]
- 40e:	23aa      	movs	r3, #170
- 410:	6013      	str	r3, [r2, #0]
+ 426:	4a0b      	ldr	r2, [pc, #44]	(454 <.text+0x454>)
+ 428:	600b      	str	r3, [r1, #0]
+ 42a:	23aa      	movs	r3, #170
+ 42c:	6013      	str	r3, [r2, #0]
   PLLFEED   = 0x55;
- 412:	2355      	movs	r3, #85
- 414:	6013      	str	r3, [r2, #0]
+ 42e:	2355      	movs	r3, #85
+ 430:	6013      	str	r3, [r2, #0]
   while ((PLLSTAT & 0x02000000) == 0);  
- 416:	4b06      	ldr	r3, [pc, #24]	(430 <.text+0x430>)
- 418:	681b      	ldr	r3, [r3, #0]
- 41a:	019a      	lsls	r2, r3, #6
- 41c:	d5fb      	bpl.n	416 <Stack_Size+0x16>
+ 432:	4b06      	ldr	r3, [pc, #24]	(44c <.text+0x44c>)
+ 434:	681b      	ldr	r3, [r3, #0]
+ 436:	019a      	lsls	r2, r3, #6
+ 438:	d5fb      	bpl.n	432 <Stack_Size+0x32>
   PCLKSEL0 = 0x55555555;  		     /* PCLK is the same as CCLK */
- 41e:	4b0e      	ldr	r3, [pc, #56]	(458 <.text+0x458>)
- 420:	4a0b      	ldr	r2, [pc, #44]	(450 <.text+0x450>)
- 422:	6013      	str	r3, [r2, #0]
+ 43a:	4b0e      	ldr	r3, [pc, #56]	(474 <.text+0x474>)
+ 43c:	4a0b      	ldr	r2, [pc, #44]	(46c <.text+0x46c>)
+ 43e:	6013      	str	r3, [r2, #0]
   PCLKSEL1 = 0x55555555;  
- 424:	3204      	adds	r2, #4
- 426:	6013      	str	r3, [r2, #0]
+ 440:	3204      	adds	r2, #4
+ 442:	6013      	str	r3, [r2, #0]
 }
- 428:	bc30      	pop	{r4, r5}
- 42a:	bc01      	pop	{r0}
- 42c:	4700      	bx	r0
- 42e:	0000      	lsls	r0, r0, #0
- 430:	c088      	stmia	r0!, {r3, r7}
- 432:	e01f      	b.n	474 <_edata+0x18>
- 434:	c080      	stmia	r0!, {r7}
- 436:	e01f      	b.n	478 <_edata+0x1c>
- 438:	c08c      	stmia	r0!, {r2, r3, r7}
- 43a:	e01f      	b.n	47c <_edata+0x20>
- 43c:	c1a0      	stmia	r1!, {r5, r7}
- 43e:	e01f      	b.n	480 <_edata+0x24>
- 440:	c10c      	stmia	r1!, {r2, r3}
- 442:	e01f      	b.n	484 <_edata+0x28>
- 444:	0018      	lsls	r0, r3, #0
- 446:	0001      	lsls	r1, r0, #0
- 448:	c104      	stmia	r1!, {r2}
- 44a:	e01f      	b.n	48c <_edata+0x30>
- 44c:	aaaa      	add	r2, sp, #680
- 44e:	aaaa      	add	r2, sp, #680
- 450:	c1a8      	stmia	r1!, {r3, r5, r7}
- 452:	e01f      	b.n	494 <_edata+0x38>
- 454:	a8aa      	add	r0, sp, #680
- 456:	22aa      	movs	r2, #170
- 458:	5555      	strb	r5, [r2, r5]
- 45a:	5555      	strb	r5, [r2, r5]
+ 444:	bc30      	pop	{r4, r5}
+ 446:	bc01      	pop	{r0}
+ 448:	4700      	bx	r0
+ 44a:	0000      	lsls	r0, r0, #0
+ 44c:	c088      	stmia	r0!, {r3, r7}
+ 44e:	e01f      	b.n	490 <_edata+0x18>
+ 450:	c080      	stmia	r0!, {r7}
+ 452:	e01f      	b.n	494 <_edata+0x1c>
+ 454:	c08c      	stmia	r0!, {r2, r3, r7}
+ 456:	e01f      	b.n	498 <_edata+0x20>
+ 458:	c1a0      	stmia	r1!, {r5, r7}
+ 45a:	e01f      	b.n	49c <_edata+0x24>
+ 45c:	c10c      	stmia	r1!, {r2, r3}
+ 45e:	e01f      	b.n	4a0 <_edata+0x28>
+ 460:	0018      	lsls	r0, r3, #0
+ 462:	0001      	lsls	r1, r0, #0
+ 464:	c104      	stmia	r1!, {r2}
+ 466:	e01f      	b.n	4a8 <_edata+0x30>
+ 468:	aaaa      	add	r2, sp, #680
+ 46a:	aaaa      	add	r2, sp, #680
+ 46c:	c1a8      	stmia	r1!, {r3, r5, r7}
+ 46e:	e01f      	b.n	4b0 <_edata+0x38>
+ 470:	a8aa      	add	r0, sp, #680
+ 472:	22aa      	movs	r2, #170
+ 474:	5555      	strb	r5, [r2, r5]
+ 476:	5555      	strb	r5, [r2, r5]

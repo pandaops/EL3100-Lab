@@ -1,0 +1,1014 @@
+
+main.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000047c  00000000  00000000  00008000  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .bss          00000004  40000000  40000000  0000847c  2**2
+                  ALLOC
+  2 .stack        00000400  40000100  40000100  00008480  2**3
+                  CONTENTS
+  3 .comment      000000c9  00000000  00000000  00008880  2**0
+                  CONTENTS, READONLY
+  4 .debug_aranges 000000f8  00000000  00000000  00008950  2**3
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_pubnames 000000fe  00000000  00000000  00008a48  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_info   00000499  00000000  00000000  00008b46  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 000002c0  00000000  00000000  00008fdf  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_line   0000031a  00000000  00000000  0000929f  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_frame  00000124  00000000  00000000  000095bc  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_str    00000256  00000000  00000000  000096e0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_loc    00000269  00000000  00000000  00009936  2**0
+                  CONTENTS, READONLY, DEBUGGING
+Disassembly of section .text:
+
+00000000 <Vectors>:
+@  Mapped to Address 0.
+@  Absolute addressing mode must be used.
+@  Dummy Handlers are implemented as infinite loops which can be modified.
+
+Vectors:        LDR     PC, Reset_Addr         
+   0:	e59ff018 	ldr	pc, [pc, #24]	; 20 <Reset_Addr>
+                LDR     PC, Undef_Addr
+   4:	e59ff018 	ldr	pc, [pc, #24]	; 24 <Undef_Addr>
+                LDR     PC, SWI_Addr
+   8:	e59ff018 	ldr	pc, [pc, #24]	; 28 <SWI_Addr>
+                LDR     PC, PAbt_Addr
+   c:	e59ff018 	ldr	pc, [pc, #24]	; 2c <PAbt_Addr>
+                LDR     PC, DAbt_Addr
+  10:	e59ff018 	ldr	pc, [pc, #24]	; 30 <DAbt_Addr>
+                NOP                            @ Reserved Vector 
+  14:	e1a00000 	nop			(mov r0,r0)
+                LDR     PC, IRQ_Addr
+  18:	e59ff018 	ldr	pc, [pc, #24]	; 38 <IRQ_Addr>
+@@                LDR     PC, [PC, #-0x0120]     @ Vector from VicVectAddr
+                LDR     PC, FIQ_Addr
+  1c:	e59ff018 	ldr	pc, [pc, #24]	; 3c <FIQ_Addr>
+
+00000020 <Reset_Addr>:
+  20:	00000054 	andeq	r0, r0, r4, asr r0
+
+00000024 <Undef_Addr>:
+  24:	00000040 	andeq	r0, r0, r0, asr #32
+
+00000028 <SWI_Addr>:
+  28:	00000044 	andeq	r0, r0, r4, asr #32
+
+0000002c <PAbt_Addr>:
+  2c:	00000048 	andeq	r0, r0, r8, asr #32
+
+00000030 <DAbt_Addr>:
+  30:	0000004c 	andeq	r0, r0, ip, asr #32
+  34:	b9206e28 	stmltdb	r0!, {r3, r5, r9, sl, fp, sp, lr}
+
+00000038 <IRQ_Addr>:
+  38:	000000fc 	streqd	r0, [r0], -ip
+
+0000003c <FIQ_Addr>:
+  3c:	00000050 	andeq	r0, r0, r0, asr r0
+
+00000040 <Undef_Handler>:
+
+Reset_Addr:      .word     Reset_Handler
+Undef_Addr:      .word     Undef_Handler
+SWI_Addr:        .word     SWI_Handler
+PAbt_Addr:       .word     PAbt_Handler
+DAbt_Addr:       .word     DAbt_Handler
+                 .word     0xB9206E28             @ Reserved Address 
+IRQ_Addr:        .word     IRQ_Handler
+FIQ_Addr:        .word     FIQ_Handler
+
+Undef_Handler:   B       Undef_Handler
+  40:	eafffffe 	b	40 <F_Bit>
+
+00000044 <SWI_Handler>:
+@@ SWI_Handler:     B       SWI_Handler
+.extern SoftwareInterrupt
+SWI_Handler:     B       SoftwareInterrupt  @ see swi_handler.S
+  44:	ea000046 	b	164 <SoftwareInterrupt>
+
+00000048 <PAbt_Handler>:
+PAbt_Handler:    B       PAbt_Handler
+  48:	eafffffe 	b	48 <PAbt_Handler>
+
+0000004c <DAbt_Handler>:
+DAbt_Handler:    B       DAbt_Handler
+  4c:	eafffffe 	b	4c <DAbt_Handler>
+
+00000050 <FIQ_Handler>:
+@@ handled thru assembler wrapper (see below)
+@@ IRQ_Handler:    B       IRQ_Handler
+FIQ_Handler:     B       FIQ_Handler
+  50:	eafffffe 	b	50 <FIQ_Handler>
+
+00000054 <Reset_Handler>:
+
+
+@ Reset Handler
+@                EXPORT  Reset_Handler
+.global Reset_handler
+Reset_Handler:
+
+@  Call low-level init C-function
+@                IMPORT TargetResetInit
+@                BL   TargetResetInit
+
+                 .extern TargetResetInit
+                 ldr     SP, =Stack_Top    @ temporary stack at Stack_Top
+  54:	e59fd0e4 	ldr	sp, [pc, #228]	; 140 <.text+0x140>
+                 LDR R0, =TargetResetInit
+  58:	e59f00e4 	ldr	r0, [pc, #228]	; 144 <.text+0x144>
+                 MOV LR, PC
+  5c:	e1a0e00f 	mov	lr, pc
+                 BX R0
+  60:	e12fff10 	bx	r0
+
+
+@  Setup Stack for each mode
+                LDR     R0, =Stack_Top
+  64:	e59f00d4 	ldr	r0, [pc, #212]	; 140 <.text+0x140>
+
+@  Enter Undefined Instruction Mode and set its Stack Pointer
+                MSR     CPSR_c, #Mode_UND | I_Bit | F_Bit
+  68:	e321f0db 	msr	CPSR_c, #219	; 0xdb
+                MOV     SP, R0
+  6c:	e1a0d000 	mov	sp, r0
+                SUB     R0, R0, #UND_Stack_Size
+  70:	e2400000 	sub	r0, r0, #0	; 0x0
+
+@  Enter Abort Mode and set its Stack Pointer
+                MSR     CPSR_c, #Mode_ABT | I_Bit | F_Bit
+  74:	e321f0d7 	msr	CPSR_c, #215	; 0xd7
+                MOV     SP, R0
+  78:	e1a0d000 	mov	sp, r0
+                SUB     R0, R0, #ABT_Stack_Size
+  7c:	e2400000 	sub	r0, r0, #0	; 0x0
+
+@  Enter FIQ Mode and set its Stack Pointer
+                MSR     CPSR_c, #Mode_FIQ | I_Bit | F_Bit
+  80:	e321f0d1 	msr	CPSR_c, #209	; 0xd1
+                MOV     SP, R0
+  84:	e1a0d000 	mov	sp, r0
+                SUB     R0, R0, #FIQ_Stack_Size
+  88:	e2400000 	sub	r0, r0, #0	; 0x0
+
+@  Enter IRQ Mode and set its Stack Pointer
+                MSR     CPSR_c, #Mode_IRQ | I_Bit | F_Bit
+  8c:	e321f0d2 	msr	CPSR_c, #210	; 0xd2
+                MOV     SP, R0
+  90:	e1a0d000 	mov	sp, r0
+                SUB     R0, R0, #IRQ_Stack_Size
+  94:	e2400c01 	sub	r0, r0, #256	; 0x100
+
+@  Enter Supervisor Mode and set its Stack Pointer
+                MSR     CPSR_c, #Mode_SVC | I_Bit | F_Bit
+  98:	e321f0d3 	msr	CPSR_c, #211	; 0xd3
+                MOV     SP, R0
+  9c:	e1a0d000 	mov	sp, r0
+                SUB     R0, R0, #SVC_Stack_Size
+  a0:	e2400c01 	sub	r0, r0, #256	; 0x100
+
+@  Enter User Mode and set its Stack Pointer
+@  mt:          MSR     CPSR_c, #Mode_USR
+                MSR     CPSR_c, #Mode_USR | I_Bit
+  a4:	e321f090 	msr	CPSR_c, #144	; 0x90
+                MOV     SP, R0
+  a8:	e1a0d000 	mov	sp, r0
+                SUB     SL, SP, #USR_Stack_Size
+  ac:	e24dac02 	sub	sl, sp, #512	; 0x200
+@  mt: Start application in USR-mode with IRQ-exceptions disabled.
+@  They can be enabled at runtime thru IntEnable in swi.h/swi_handler.S.
+
+@  Relocate .data section (Copy from ROM to RAM)
+                LDR     R1, =_etext 
+  b0:	e59f1090 	ldr	r1, [pc, #144]	; 148 <.text+0x148>
+                LDR     R2, =_data 
+  b4:	e59f2090 	ldr	r2, [pc, #144]	; 14c <.text+0x14c>
+                LDR     R3, =_edata 
+  b8:	e59f3090 	ldr	r3, [pc, #144]	; 150 <.text+0x150>
+                CMP     R2, R3
+  bc:	e1520003 	cmp	r2, r3
+                BEQ     DataIsEmpty
+  c0:	0a000003 	beq	d4 <DataIsEmpty>
+
+000000c4 <LoopRel>:
+LoopRel:        CMP     R2, R3 
+  c4:	e1520003 	cmp	r2, r3
+                LDRLO   R0, [R1], #4 
+  c8:	34910004 	ldrcc	r0, [r1], #4
+                STRLO   R0, [R2], #4 
+  cc:	34820004 	strcc	r0, [r2], #4
+                BLO     LoopRel 
+  d0:	3afffffb 	bcc	c4 <LoopRel>
+
+000000d4 <DataIsEmpty>:
+DataIsEmpty:
+ 
+@  Clear .bss section (Zero init)
+                MOV     R0, #0 
+  d4:	e3a00000 	mov	r0, #0	; 0x0
+                LDR     R1, =__bss_start__ 
+  d8:	e59f1074 	ldr	r1, [pc, #116]	; 154 <.text+0x154>
+                LDR     R2, =__bss_end__ 
+  dc:	e59f2074 	ldr	r2, [pc, #116]	; 158 <.text+0x158>
+                CMP     R1,R2
+  e0:	e1510002 	cmp	r1, r2
+                BEQ     BSSIsEmpty
+  e4:	0a000002 	beq	f4 <BSSIsEmpty>
+
+000000e8 <LoopZI>:
+LoopZI:         CMP     R1, R2 
+  e8:	e1510002 	cmp	r1, r2
+                STRLO   R0, [R1], #4 
+  ec:	34810004 	strcc	r0, [r1], #4
+                BLO     LoopZI 
+  f0:	3afffffc 	bcc	e8 <LoopZI>
+
+000000f4 <BSSIsEmpty>:
+BSSIsEmpty:
+
+
+@  Enter the C code
+@                IMPORT  __main
+@                LDR     R0, =__main
+                .extern main
+                LDR R0, =main
+  f4:	e59f0060 	ldr	r0, [pc, #96]	; 15c <.text+0x15c>
+                BX      R0
+  f8:	e12fff10 	bx	r0
+
+000000fc <IRQ_Handler>:
+
+
+@ User Initial Stack & Heap (not used in GNU port)
+@@                AREA    |.text|, CODE, READONLY
+
+@@                IMPORT  __use_two_region_memory
+@@                EXPORT  __user_initial_stackheap
+@@__user_initial_stackheap
+
+@@                LDR     R0, =  Heap_Mem
+@@                LDR     R1, =(Stack_Mem + USR_Stack_Size)
+@@                LDR     R2, = (Heap_Mem +      Heap_Size)
+@@                LDR     R3, = Stack_Mem
+@@                BX      LR
+
+
+@@ IRQ_Wrapper based on Examples for
+@@ AT91-ARM7TDMI AIC from Atmel,
+@@ adapted to LPC23xx/24xx VIC by M. Thomas
+@@ This wrapper avoids compiler-dependencies.
+
+.set LPC_BASE_VIC, 0xFFFFF000
+.set VIC_VectAddr, 0xF00
+
+.arm
+IRQ_Handler:
+
+@- Manage Exception Entry
+@- Adjust and save LR_irq in IRQ stack
+            sub         lr, lr, #4
+  fc:	e24ee004 	sub	lr, lr, #4	; 0x4
+            stmfd       sp!, {lr}
+ 100:	e92d4000 	stmdb	sp!, {lr}
+
+@- Save SPSR need to be saved for nested interrupt
+            mrs         r14, SPSR
+ 104:	e14fe000 	mrs	lr, SPSR
+            stmfd       sp!, {r14}
+ 108:	e92d4000 	stmdb	sp!, {lr}
+
+@- Save and r0 in IRQ stack
+            stmfd       sp!, {r0}
+ 10c:	e92d0001 	stmdb	sp!, {r0}
+
+@- Load the ISR-Address from VICVectAddr
+            ldr         r14, =LPC_BASE_VIC
+ 110:	e59fe048 	ldr	lr, [pc, #72]	; 160 <.text+0x160>
+            ldr         r0 , [r14, #VIC_VectAddr]
+ 114:	e59e0f00 	ldr	r0, [lr, #3840]
+
+@- Enable Interrupt and Switch in Supervisor Mode
+           msr         CPSR_c, #Mode_SVC
+ 118:	e321f013 	msr	CPSR_c, #19	; 0x13
+
+@- Save scratch/used registers and LR in User Stack
+            stmfd       sp!, { r1-r3, r12, r14 }
+ 11c:	e92d500e 	stmdb	sp!, {r1, r2, r3, ip, lr}
+
+@- Branch to the routine pointed by the VIC_VectAddr
+            mov         r14, pc
+ 120:	e1a0e00f 	mov	lr, pc
+            bx          r0
+ 124:	e12fff10 	bx	r0
+
+@- Restore scratch/used registers and LR from User Stack
+            ldmia       sp!, { r1-r3, r12, r14 }
+ 128:	e8bd500e 	ldmia	sp!, {r1, r2, r3, ip, lr}
+
+@- Disable Interrupt and switch back in IRQ mode
+            msr         CPSR_c, #I_Bit | Mode_IRQ
+ 12c:	e321f092 	msr	CPSR_c, #146	; 0x92
+
+@-  Mark the End of Interrupt on the VIC
+@   by writing to VICVectAddr - not needed 
+@   here since already done in the ISRs
+@@           ldr         r14, =LPC_BASE_VIC
+@@           str         r14, [r14, #VIC_VectAddr]
+
+@- Restore R0
+            ldmia       sp!, {r0}
+ 130:	e8bd0001 	ldmia	sp!, {r0}
+
+@- Restore SPSR_irq and r0 from IRQ stack
+            ldmia       sp!, {r14}
+ 134:	e8bd4000 	ldmia	sp!, {lr}
+            msr         SPSR_cxsf, r14
+ 138:	e16ff00e 	msr	SPSR_fsxc, lr
+
+@- Restore adjusted  LR_irq from IRQ stack directly in the PC
+            ldmia       sp!, {pc}^
+ 13c:	e8fd8000 	ldmia	sp!, {pc}^
+ 140:	40000500 	andmi	r0, r0, r0, lsl #10
+ 144:	00000319 	andeq	r0, r0, r9, lsl r3
+ 148:	0000047c 	andeq	r0, r0, ip, ror r4
+ 14c:	40000000 	andmi	r0, r0, r0
+ 150:	0000047c 	andeq	r0, r0, ip, ror r4
+ 154:	40000000 	andmi	r0, r0, r0
+ 158:	40000004 	andmi	r0, r0, r4
+ 15c:	000001f9 	streqd	r0, [r0], -r9
+ 160:	fffff000 	undefined instruction 0xfffff000
+
+00000164 <SoftwareInterrupt>:
+@*           (not thumb). This is the case if the functions below  *
+@*           (IntEnable/IntDisable) get used.
+@********************************************************************
+SoftwareInterrupt:
+	LDR		R0, [LR, #-4]          /* get swi instruction code (ARM-mode) */
+ 164:	e51e0004 	ldr	r0, [lr, #-4]
+	BIC		R0, R0, #0xff000000    /* clear top 8 bits leaving swi "comment field"=number */
+ 168:	e3c004ff 	bic	r0, r0, #-16777216	; 0xff000000
+	CMP		R0, #4                 /* range check */
+ 16c:	e3500004 	cmp	r0, #4	; 0x4
+	LDRLO	PC, [PC, R0, LSL #2]   /* get jump-address from table */
+ 170:	379ff100 	ldrcc	pc, [pc, r0, lsl #2]
+	MOVS	PC, LR                 /* if out of range: do nothing and return */
+ 174:	e1b0f00e 	movs	pc, lr
+
+00000178 <SwiFunction>:
+ 178:	00000188 	andeq	r0, r0, r8, lsl #3
+ 17c:	00000198 	muleq	r0, r8, r1
+ 180:	000001a8 	andeq	r0, r0, r8, lsr #3
+ 184:	000001b8 	streqh	r0, [r0], -r8
+
+00000188 <IRQDisable>:
+
+SwiFunction:
+.word IRQDisable
+.word IRQEnable
+.word FIQDisable
+.word FIQEnable
+
+IRQDisable:
+	MRS		R0, SPSR
+ 188:	e14f0000 	mrs	r0, SPSR
+	ORR		R0, R0, #I_Bit
+ 18c:	e3800080 	orr	r0, r0, #128	; 0x80
+	MSR		SPSR_c, R0
+ 190:	e161f000 	msr	SPSR_c, r0
+	MOVS	PC, LR
+ 194:	e1b0f00e 	movs	pc, lr
+
+00000198 <IRQEnable>:
+
+IRQEnable:
+	MRS		R0, SPSR
+ 198:	e14f0000 	mrs	r0, SPSR
+	BIC		R0, R0, #I_Bit
+ 19c:	e3c00080 	bic	r0, r0, #128	; 0x80
+	MSR		SPSR_c, R0
+ 1a0:	e161f000 	msr	SPSR_c, r0
+	MOVS	PC, LR
+ 1a4:	e1b0f00e 	movs	pc, lr
+
+000001a8 <FIQDisable>:
+
+FIQDisable:
+	MRS		R0, SPSR
+ 1a8:	e14f0000 	mrs	r0, SPSR
+	ORR		R0, R0, #F_Bit
+ 1ac:	e3800040 	orr	r0, r0, #64	; 0x40
+	MSR		SPSR_c, R0
+ 1b0:	e161f000 	msr	SPSR_c, r0
+	MOVS	PC, LR
+ 1b4:	e1b0f00e 	movs	pc, lr
+
+000001b8 <FIQEnable>:
+
+FIQEnable:
+	MRS		R0, SPSR
+ 1b8:	e14f0000 	mrs	r0, SPSR
+	BIC		R0, R0, #F_Bit
+ 1bc:	e3c00040 	bic	r0, r0, #64	; 0x40
+	MSR		SPSR_c, R0
+ 1c0:	e161f000 	msr	SPSR_c, r0
+	MOVS	PC, LR
+ 1c4:	e1b0f00e 	movs	pc, lr
+
+000001c8 <IntEnable>:
+
+@**********************************************************************
+@*  Call SWI to enable IRQ                                            *
+@*  Function : void IntEnable(void)                                   *
+@*  Parameters:      None                                             *
+@*  input  :         None                                             * 
+@*  output :         None                                             *
+@**********************************************************************
+IntEnable:
+	SWI     SWI_IRQ_EN
+ 1c8:	ef000001 	svc	0x00000001
+	BX      lr
+ 1cc:	e12fff1e 	bx	lr
+
+000001d0 <IntDisable>:
+@ end of IntEnable
+
+@**********************************************************************
+@*  Call SWI to disable IRQ                                           *
+@*  Function : void IntDisable(void)                                  *
+@*  Parameters     : None                                             *
+@*  input          : None                                             * 
+@*  output         : None                                             *
+@**********************************************************************
+IntDisable:
+	SWI     SWI_IRQ_DIS
+ 1d0:	ef000000 	svc	0x00000000
+	BX      lr
+ 1d4:	e12fff1e 	bx	lr
+
+000001d8 <string_tx>:
+   return (U1THR = ch);
+}
+// serial transmission routine for string of characters
+void string_tx(char *a)
+{
+ 1d8:	e006      	b.n	1e8 <string_tx+0x10>
+      while(*a!='\0')
+      {
+        while((U1LSR&0X20)!=0X20);
+ 1da:	4b05      	ldr	r3, [pc, #20]	(1f0 <.text+0x1f0>)
+ 1dc:	681b      	ldr	r3, [r3, #0]
+ 1de:	0699      	lsls	r1, r3, #26
+ 1e0:	d5fb      	bpl.n	1da <string_tx+0x2>
+        U1THR=*a;  
+ 1e2:	4b04      	ldr	r3, [pc, #16]	(1f4 <.text+0x1f4>)
+ 1e4:	601a      	str	r2, [r3, #0]
+        a++;
+ 1e6:	3001      	adds	r0, #1
+ 1e8:	7802      	ldrb	r2, [r0, #0]
+ 1ea:	2a00      	cmp	r2, #0
+ 1ec:	d1f5      	bne.n	1da <string_tx+0x2>
+      }
+}
+ 1ee:	4770      	bx	lr
+ 1f0:	0014      	lsls	r4, r2, #0
+ 1f2:	e001      	b.n	1f8 <main>
+ 1f4:	0000      	lsls	r0, r0, #0
+ 1f6:	e001      	b.n	1fc <main+0x4>
+
+000001f8 <main>:
+
+/************************* main routine ************************************************************/
+void main(void)
+{
+ 1f8:	b500      	push	{lr}
+ 1fa:	b087      	sub	sp, #28
+          unsigned long Fdiv;
+	  unsigned char arr[] = {"\t ViMicroSystems Pvt Ltd\t "};
+ 1fc:	4668      	mov	r0, sp
+ 1fe:	4916      	ldr	r1, [pc, #88]	(258 <.text+0x258>)
+ 200:	221b      	movs	r2, #27
+ 202:	3001      	adds	r0, #1
+ 204:	f000 f900 	bl	408 <memcpy>
+
+          PINSEL0 = 0x00000050;   //Pinselection for uart0 tx and rx lines
+ 208:	4b14      	ldr	r3, [pc, #80]	(25c <.text+0x25c>)
+ 20a:	2250      	movs	r2, #80
+ 20c:	601a      	str	r2, [r3, #0]
+          PINSEL4 = 0x0000000A;   //Pinselection for uart1 tx and rx lines 
+ 20e:	220a      	movs	r2, #10
+ 210:	3310      	adds	r3, #16
+ 212:	601a      	str	r2, [r3, #0]
+	  init_timer((( 72000000/ 100 ) - 1));	
+ 214:	4812      	ldr	r0, [pc, #72]	(260 <.text+0x260>)
+ 216:	f000 f85f 	bl	2d8 <init_timer>
+
+	/**************************** uart1 initialization ************************************/	
+          U1LCR = 0x83;  
+ 21a:	4912      	ldr	r1, [pc, #72]	(264 <.text+0x264>)
+ 21c:	2383      	movs	r3, #131
+ 21e:	600b      	str	r3, [r1, #0]
+          Fdiv = ( 72000000/ 16 ) / 19200;  ///baud rate  
+          U1DLM = Fdiv / 256;
+ 220:	4b11      	ldr	r3, [pc, #68]	(268 <.text+0x268>)
+ 222:	2200      	movs	r2, #0
+ 224:	601a      	str	r2, [r3, #0]
+          U1DLL = Fdiv % 256;
+ 226:	3b04      	subs	r3, #4
+ 228:	22ea      	movs	r2, #234
+ 22a:	601a      	str	r2, [r3, #0]
+          U1LCR = 0x03;   //* DLAB = 0 *
+ 22c:	2303      	movs	r3, #3
+ 22e:	600b      	str	r3, [r1, #0]
+
+	  while(1)
+          {
+	          string_tx(arr);
+ 230:	4668      	mov	r0, sp
+ 232:	3001      	adds	r0, #1
+ 234:	f7ff ffd0 	bl	1d8 <string_tx>
+ 238:	4b0c      	ldr	r3, [pc, #48]	(26c <.text+0x26c>)
+ 23a:	681b      	ldr	r3, [r3, #0]
+ 23c:	069a      	lsls	r2, r3, #26
+ 23e:	d5fb      	bpl.n	238 <USR_Stack_Size+0x38>
+ 240:	4b0b      	ldr	r3, [pc, #44]	(270 <.text+0x270>)
+ 242:	220d      	movs	r2, #13
+ 244:	601a      	str	r2, [r3, #0]
+ 246:	4b09      	ldr	r3, [pc, #36]	(26c <.text+0x26c>)
+ 248:	681b      	ldr	r3, [r3, #0]
+ 24a:	069a      	lsls	r2, r3, #26
+ 24c:	d5fb      	bpl.n	246 <USR_Stack_Size+0x46>
+ 24e:	4b08      	ldr	r3, [pc, #32]	(270 <.text+0x270>)
+ 250:	220a      	movs	r2, #10
+ 252:	601a      	str	r2, [r3, #0]
+ 254:	e7ec      	b.n	230 <USR_Stack_Size+0x30>
+ 256:	0000      	lsls	r0, r0, #0
+ 258:	0460      	lsls	r0, r4, #17
+ 25a:	0000      	lsls	r0, r0, #0
+ 25c:	c000      	stmia	r0!, {}
+ 25e:	e002      	b.n	266 <.text+0x266>
+ 260:	fc7f 000a 	ldc2l	0, cr0, [pc], #-40
+ 264:	000c      	lsls	r4, r1, #0
+ 266:	e001      	b.n	26c <.text+0x26c>
+ 268:	0004      	lsls	r4, r0, #0
+ 26a:	e001      	b.n	270 <.text+0x270>
+ 26c:	0014      	lsls	r4, r2, #0
+ 26e:	e001      	b.n	274 <install_irq>
+ 270:	0000      	lsls	r0, r0, #0
+ 272:	e001      	b.n	278 <install_irq+0x4>
+
+00000274 <install_irq>:
+** Returned value:		true or false, return false if IntNum is out of range
+** 
+******************************************************************************/
+int install_irq( int IntNumber, void *HandlerAddr, int Priority )
+{
+ 274:	b530      	push	{r4, r5, lr}
+    int *vect_addr;
+    int *vect_cntl;
+      
+    VICIntEnClr = 1 << IntNumber;	/* Disable Interrupt */
+ 276:	2301      	movs	r3, #1
+ 278:	1c0c      	adds	r4, r1, #0
+ 27a:	1c19      	adds	r1, r3, #0
+ 27c:	4b09      	ldr	r3, [pc, #36]	(2a4 <.text+0x2a4>)
+ 27e:	4081      	lsls	r1, r0
+ 280:	1c15      	adds	r5, r2, #0
+ 282:	6019      	str	r1, [r3, #0]
+    if ( IntNumber >= 32 )
+ 284:	281f      	cmp	r0, #31
+ 286:	dd01      	ble.n	28c <install_irq+0x18>
+ 288:	2000      	movs	r0, #0
+ 28a:	e007      	b.n	29c <install_irq+0x28>
+    {
+		return ( FALSE );
+    }
+    else
+    {
+		/* find first un-assigned VIC address for the handler */
+		vect_addr = (int *)(VIC_BASE_ADDR + VECT_ADDR_INDEX + IntNumber*4);
+		vect_cntl = (int *)(VIC_BASE_ADDR + VECT_CNTL_INDEX + IntNumber*4);
+		*vect_addr = (int)HandlerAddr;	/* set interrupt vector */
+ 28c:	4b06      	ldr	r3, [pc, #24]	(2a8 <.text+0x2a8>)
+ 28e:	0082      	lsls	r2, r0, #2
+ 290:	50d4      	str	r4, [r2, r3]
+		*vect_cntl = Priority;
+ 292:	4b06      	ldr	r3, [pc, #24]	(2ac <.text+0x2ac>)
+ 294:	50d5      	str	r5, [r2, r3]
+		VICIntEnable = 1 << IntNumber;	/* Enable Interrupt */
+ 296:	4b06      	ldr	r3, [pc, #24]	(2b0 <.text+0x2b0>)
+ 298:	6019      	str	r1, [r3, #0]
+ 29a:	2001      	movs	r0, #1
+		return( TRUE );
+    }
+}
+ 29c:	bc30      	pop	{r4, r5}
+ 29e:	bc02      	pop	{r1}
+ 2a0:	4708      	bx	r1
+ 2a2:	0000      	lsls	r0, r0, #0
+ 2a4:	f014 ffff 	bl	152a6 <VIC_VectAddr+0x143a6>
+ 2a8:	f100 ffff 	bl	1012aa <VIC_VectAddr+0x1003aa>
+ 2ac:	f200 ffff 	bl	2012ae <VIC_VectAddr+0x2003ae>
+ 2b0:	f010 ffff 	bl	112b2 <VIC_VectAddr+0x103b2>
+
+000002b4 <Timer0Handler>:
+
+/******************************************************************************
+** Function name:		Timer0Handler
+**
+** Descriptions:		Timer/Counter 0 interrupt handler
+**				executes each 10ms @ 60 MHz CPU Clock
+**
+** parameters:			None
+** Returned value:		None
+** 
+******************************************************************************/
+#ifdef __GNUC__
+void Timer0Handler (void); // avoid missing proto warning - mthomas
+#endif
+void Timer0Handler (void) __irq 
+{  
+    T0IR = 1;			/* clear interrupt flag */
+ 2b4:	4b05      	ldr	r3, [pc, #20]	(2cc <.text+0x2cc>)
+ 2b6:	2201      	movs	r2, #1
+ 2b8:	601a      	str	r2, [r3, #0]
+    IENABLE;			/* handles nested interrupt */
+
+    timer_counter++;
+ 2ba:	4a05      	ldr	r2, [pc, #20]	(2d0 <.text+0x2d0>)
+ 2bc:	6813      	ldr	r3, [r2, #0]
+ 2be:	3301      	adds	r3, #1
+ 2c0:	6013      	str	r3, [r2, #0]
+
+    IDISABLE;
+    VICVectAddr = 0;		/* Acknowledge Interrupt */
+ 2c2:	4b04      	ldr	r3, [pc, #16]	(2d4 <.text+0x2d4>)
+ 2c4:	2200      	movs	r2, #0
+ 2c6:	601a      	str	r2, [r3, #0]
+}
+ 2c8:	4770      	bx	lr
+ 2ca:	0000      	lsls	r0, r0, #0
+ 2cc:	4000      	ands	r0, r0
+ 2ce:	e000      	b.n	2d2 <.text+0x2d2>
+ 2d0:	0000      	lsls	r0, r0, #0
+ 2d2:	4000      	ands	r0, r0
+ 2d4:	ff00 ffff 	undefined
+
+000002d8 <init_timer>:
+
+/******************************************************************************
+** Function name:		enable_timer
+**
+** Descriptions:		Enable timer
+**
+** parameters:			timer number: 0 or 1
+** Returned value:		None
+** 
+******************************************************************************/
+void enable_timer( char timer_num )
+{
+    if ( timer_num == 0 )
+    {
+		T0TCR = 1;
+    }
+    else
+    {
+		T1TCR = 1;
+    }
+    return;
+}
+
+/******************************************************************************
+** Function name:		disable_timer
+**
+** Descriptions:		Disable timer
+**
+** parameters:			timer number: 0 or 1
+** Returned value:		None
+** 
+******************************************************************************/
+void disable_timer( char timer_num )
+{
+    if ( timer_num == 0 )
+    {
+		T0TCR = 0;
+    }
+    else
+    {
+		T1TCR = 0;
+    }
+    return;
+}
+
+/******************************************************************************
+** Function name:		reset_timer
+**
+** Descriptions:		Reset timer
+**
+** parameters:			timer number: 0 or 1
+** Returned value:		None
+** 
+******************************************************************************/
+void reset_timer( char timer_num )
+{
+    int regVal;
+
+    if ( timer_num == 0 )
+    {
+		regVal = T0TCR;
+		regVal |= 0x02;
+		T0TCR = regVal;
+    }
+    else
+    {
+		regVal = T1TCR;
+		regVal |= 0x02;
+		T1TCR = regVal;
+    }
+    return;
+} 
+
+/******************************************************************************
+** Function name:		init_timer
+**
+** Descriptions:		Initialize timer, set timer interval, reset timer,
+**						install timer interrupt handler
+**
+** parameters:			None
+** Returned value:		true or false, if the interrupt handler can't be
+**						installed, return false.
+** 
+******************************************************************************/
+int init_timer ( int TimerInterval ) 
+{
+ 2d8:	b500      	push	{lr}
+    timer_counter = 0;
+ 2da:	4a0c      	ldr	r2, [pc, #48]	(30c <.text+0x30c>)
+ 2dc:	2300      	movs	r3, #0
+ 2de:	6013      	str	r3, [r2, #0]
+    T0MR0 = TimerInterval;
+ 2e0:	4b0b      	ldr	r3, [pc, #44]	(310 <.text+0x310>)
+    T0MCR = 3;				/* Interrupt and Reset on MR0*/ 
+ 2e2:	2203      	movs	r2, #3
+ 2e4:	6018      	str	r0, [r3, #0]
+ 2e6:	3b04      	subs	r3, #4
+ 2e8:	601a      	str	r2, [r3, #0]
+    if ( install_irq( 4, (void *)Timer0Handler, 0x01 ) == FALSE )
+ 2ea:	490a      	ldr	r1, [pc, #40]	(314 <.text+0x314>)
+ 2ec:	2201      	movs	r2, #1
+ 2ee:	2004      	movs	r0, #4
+ 2f0:	f7ff ffc0 	bl	274 <install_irq>
+ 2f4:	2200      	movs	r2, #0
+ 2f6:	2800      	cmp	r0, #0
+ 2f8:	d100      	bne.n	2fc <init_timer+0x24>
+ 2fa:	2201      	movs	r2, #1
+ 2fc:	2301      	movs	r3, #1
+ 2fe:	1c10      	adds	r0, r2, #0
+ 300:	4058      	eors	r0, r3
+ 302:	0600      	lsls	r0, r0, #24
+ 304:	0e00      	lsrs	r0, r0, #24
+    {
+		return (FALSE);
+    }
+   else
+    {
+		return (TRUE);
+    }
+}
+ 306:	bc02      	pop	{r1}
+ 308:	4708      	bx	r1
+ 30a:	0000      	lsls	r0, r0, #0
+ 30c:	0000      	lsls	r0, r0, #0
+ 30e:	4000      	ands	r0, r0
+ 310:	4018      	ands	r0, r3
+ 312:	e000      	b.n	316 <.text+0x316>
+ 314:	02b5      	lsls	r5, r6, #10
+	...
+
+00000318 <TargetResetInit>:
+/**********************Routine to set processor and pheripheral clock ***********************************/
+void  TargetResetInit(void)
+{
+ 318:	b530      	push	{r4, r5, lr}
+  unsigned int  m;         
+  unsigned int  n;
+  // 72 Mhz Frequency
+  if ((PLLSTAT & 0x02000000) > 0)
+ 31a:	4b2f      	ldr	r3, [pc, #188]	(3d8 <.text+0x3d8>)
+ 31c:	681b      	ldr	r3, [r3, #0]
+ 31e:	019a      	lsls	r2, r3, #6
+ 320:	d509      	bpl.n	336 <TargetResetInit+0x1e>
+  {
+      /* If the PLL is already running   */
+      PLLCON  &= ~0x02;                          /* Disconnect the PLL                                       */
+ 322:	492e      	ldr	r1, [pc, #184]	(3dc <.text+0x3dc>)
+ 324:	680b      	ldr	r3, [r1, #0]
+ 326:	2202      	movs	r2, #2
+ 328:	4393      	bics	r3, r2
+      PLLFEED  =  0xAA;                          /* PLL register update sequence, 0xAA, 0x55                 */
+ 32a:	4a2d      	ldr	r2, [pc, #180]	(3e0 <.text+0x3e0>)
+ 32c:	600b      	str	r3, [r1, #0]
+ 32e:	23aa      	movs	r3, #170
+ 330:	6013      	str	r3, [r2, #0]
+      PLLFEED  =  0x55;
+ 332:	2355      	movs	r3, #85
+ 334:	6013      	str	r3, [r2, #0]
+  }
+  PLLCON   &= ~0x01;                            /* Disable the PLL                                          */
+ 336:	4929      	ldr	r1, [pc, #164]	(3dc <.text+0x3dc>)
+ 338:	680b      	ldr	r3, [r1, #0]
+ 33a:	2201      	movs	r2, #1
+ 33c:	4393      	bics	r3, r2
+  PLLFEED   =  0xAA;                           /* PLL register update sequence, 0xAA, 0x55                 */
+ 33e:	4a28      	ldr	r2, [pc, #160]	(3e0 <.text+0x3e0>)
+ 340:	600b      	str	r3, [r1, #0]
+ 342:	23aa      	movs	r3, #170
+ 344:	6013      	str	r3, [r2, #0]
+  PLLFEED   =  0x55;
+ 346:	2355      	movs	r3, #85
+ 348:	6013      	str	r3, [r2, #0]
+  SCS      &= ~0x10;                         /* OSCRANGE = 0, Main OSC is between 1 and 20 Mhz           */
+ 34a:	4926      	ldr	r1, [pc, #152]	(3e4 <.text+0x3e4>)
+ 34c:	680b      	ldr	r3, [r1, #0]
+ 34e:	2210      	movs	r2, #16
+ 350:	4393      	bics	r3, r2
+ 352:	600b      	str	r3, [r1, #0]
+  SCS      |=  0x20;                         /* OSCEN = 1, Enable the main oscillator                    */
+ 354:	680b      	ldr	r3, [r1, #0]
+ 356:	2220      	movs	r2, #32
+ 358:	4313      	orrs	r3, r2
+ 35a:	600b      	str	r3, [r1, #0]
+  while ((SCS &  0x40) == 0);
+ 35c:	4b21      	ldr	r3, [pc, #132]	(3e4 <.text+0x3e4>)
+ 35e:	681b      	ldr	r3, [r3, #0]
+ 360:	065a      	lsls	r2, r3, #25
+ 362:	d5fb      	bpl.n	35c <TargetResetInit+0x44>
+  CLKSRCSEL = 0x01;                         /* Select main OSC, 12MHz, as the PLL clock source          */
+ 364:	4b20      	ldr	r3, [pc, #128]	(3e8 <.text+0x3e8>)
+ 366:	2501      	movs	r5, #1
+  PLLCFG    = (24 << 0) | (1 << 16);         /* Configure the PLL multiplier and divider                 */   
+ 368:	4a20      	ldr	r2, [pc, #128]	(3ec <.text+0x3ec>)
+ 36a:	601d      	str	r5, [r3, #0]
+ 36c:	3b88      	subs	r3, #136
+ 36e:	601a      	str	r2, [r3, #0]
+  PLLFEED   = 0xAA;                         /* PLL register update sequence, 0xAA, 0x55                 */
+ 370:	4a1b      	ldr	r2, [pc, #108]	(3e0 <.text+0x3e0>)
+ 372:	24aa      	movs	r4, #170
+  PLLFEED   = 0x55;
+ 374:	2055      	movs	r0, #85
+ 376:	6014      	str	r4, [r2, #0]
+  PLLCON   |= 0x01;                        /* Enable the PLL                                           */
+ 378:	4918      	ldr	r1, [pc, #96]	(3dc <.text+0x3dc>)
+ 37a:	6010      	str	r0, [r2, #0]
+ 37c:	680b      	ldr	r3, [r1, #0]
+ 37e:	432b      	orrs	r3, r5
+ 380:	600b      	str	r3, [r1, #0]
+  PLLFEED   = 0xAA;                        /* PLL register update sequence, 0xAA, 0x55                 */
+  PLLFEED   = 0x55;
+  CCLKCFG   = 3;                        /* Configure the ARM Core Processor clock divider           */
+ 382:	4b1b      	ldr	r3, [pc, #108]	(3f0 <.text+0x3f0>)
+ 384:	6014      	str	r4, [r2, #0]
+ 386:	6010      	str	r0, [r2, #0]
+ 388:	2203      	movs	r2, #3
+ 38a:	601a      	str	r2, [r3, #0]
+  USBCLKCFG = 5;                    /* Configure the USB clock divider                          */
+ 38c:	2205      	movs	r2, #5
+ 38e:	3304      	adds	r3, #4
+ 390:	601a      	str	r2, [r3, #0]
+  while ((PLLSTAT & 0x04000000) == 0);  
+ 392:	4b11      	ldr	r3, [pc, #68]	(3d8 <.text+0x3d8>)
+ 394:	681b      	ldr	r3, [r3, #0]
+ 396:	015a      	lsls	r2, r3, #5
+ 398:	d5fb      	bpl.n	392 <TargetResetInit+0x7a>
+  PCLKSEL0  = 0xAAAAAAAA;                     /* Set peripheral clocks to be half of main clock           */
+ 39a:	4a16      	ldr	r2, [pc, #88]	(3f4 <.text+0x3f4>)
+ 39c:	4b16      	ldr	r3, [pc, #88]	(3f8 <.text+0x3f8>)
+ 39e:	601a      	str	r2, [r3, #0]
+  PCLKSEL1  = 0x22AAA8AA;
+ 3a0:	4a16      	ldr	r2, [pc, #88]	(3fc <.text+0x3fc>)
+ 3a2:	3304      	adds	r3, #4
+ 3a4:	601a      	str	r2, [r3, #0]
+  PLLCON   |= 0x02;                         /* Connect the PLL. The PLL is now the active clock source  */
+ 3a6:	490d      	ldr	r1, [pc, #52]	(3dc <.text+0x3dc>)
+ 3a8:	680b      	ldr	r3, [r1, #0]
+ 3aa:	2202      	movs	r2, #2
+ 3ac:	4313      	orrs	r3, r2
+  PLLFEED   = 0xAA;                          /* PLL register update sequence, 0xAA, 0x55                 */
+ 3ae:	4a0c      	ldr	r2, [pc, #48]	(3e0 <.text+0x3e0>)
+ 3b0:	600b      	str	r3, [r1, #0]
+ 3b2:	23aa      	movs	r3, #170
+ 3b4:	6013      	str	r3, [r2, #0]
+  PLLFEED   = 0x55;
+ 3b6:	2355      	movs	r3, #85
+ 3b8:	6013      	str	r3, [r2, #0]
+  while ((PLLSTAT & 0x02000000) == 0);  
+ 3ba:	4b07      	ldr	r3, [pc, #28]	(3d8 <.text+0x3d8>)
+ 3bc:	681b      	ldr	r3, [r3, #0]
+ 3be:	019a      	lsls	r2, r3, #6
+ 3c0:	d5fb      	bpl.n	3ba <TargetResetInit+0xa2>
+  PCLKSEL0 = 0x55555555;  		     /* PCLK is the same as CCLK */
+ 3c2:	4a0f      	ldr	r2, [pc, #60]	(400 <Stack_Size>)
+ 3c4:	4b0c      	ldr	r3, [pc, #48]	(3f8 <.text+0x3f8>)
+ 3c6:	601a      	str	r2, [r3, #0]
+  PCLKSEL1 = 0x55555555;  
+ 3c8:	3304      	adds	r3, #4
+ 3ca:	601a      	str	r2, [r3, #0]
+  PINSEL10 = 0X00000000;
+ 3cc:	4b0d      	ldr	r3, [pc, #52]	(404 <Stack_Size+0x4>)
+ 3ce:	2200      	movs	r2, #0
+ 3d0:	601a      	str	r2, [r3, #0]
+}
+ 3d2:	bc30      	pop	{r4, r5}
+ 3d4:	bc01      	pop	{r0}
+ 3d6:	4700      	bx	r0
+ 3d8:	c088      	stmia	r0!, {r3, r7}
+ 3da:	e01f      	b.n	41c <memcpy+0x14>
+ 3dc:	c080      	stmia	r0!, {r7}
+ 3de:	e01f      	b.n	420 <memcpy+0x18>
+ 3e0:	c08c      	stmia	r0!, {r2, r3, r7}
+ 3e2:	e01f      	b.n	424 <memcpy+0x1c>
+ 3e4:	c1a0      	stmia	r1!, {r5, r7}
+ 3e6:	e01f      	b.n	428 <memcpy+0x20>
+ 3e8:	c10c      	stmia	r1!, {r2, r3}
+ 3ea:	e01f      	b.n	42c <memcpy+0x24>
+ 3ec:	0018      	lsls	r0, r3, #0
+ 3ee:	0001      	lsls	r1, r0, #0
+ 3f0:	c104      	stmia	r1!, {r2}
+ 3f2:	e01f      	b.n	434 <memcpy+0x2c>
+ 3f4:	aaaa      	add	r2, sp, #680
+ 3f6:	aaaa      	add	r2, sp, #680
+ 3f8:	c1a8      	stmia	r1!, {r3, r5, r7}
+ 3fa:	e01f      	b.n	43c <memcpy+0x34>
+ 3fc:	a8aa      	add	r0, sp, #680
+ 3fe:	22aa      	movs	r2, #170
+ 400:	5555      	strb	r5, [r2, r5]
+ 402:	5555      	strb	r5, [r2, r5]
+ 404:	c028      	stmia	r0!, {r3, r5}
+ 406:	e002      	b.n	40e <memcpy+0x6>
+
+00000408 <memcpy>:
+ 408:	b570      	push	{r4, r5, r6, lr}
+ 40a:	1c05      	adds	r5, r0, #0
+ 40c:	1c14      	adds	r4, r2, #0
+ 40e:	2a0f      	cmp	r2, #15
+ 410:	d903      	bls.n	41a <memcpy+0x12>
+ 412:	1c0b      	adds	r3, r1, #0
+ 414:	432b      	orrs	r3, r5
+ 416:	079e      	lsls	r6, r3, #30
+ 418:	d00b      	beq.n	432 <memcpy+0x2a>
+ 41a:	3a01      	subs	r2, #1
+ 41c:	d305      	bcc.n	42a <memcpy+0x22>
+ 41e:	780b      	ldrb	r3, [r1, #0]
+ 420:	3101      	adds	r1, #1
+ 422:	7003      	strb	r3, [r0, #0]
+ 424:	3001      	adds	r0, #1
+ 426:	3a01      	subs	r2, #1
+ 428:	d2f9      	bcs.n	41e <memcpy+0x16>
+ 42a:	1c28      	adds	r0, r5, #0
+ 42c:	bc70      	pop	{r4, r5, r6}
+ 42e:	bc02      	pop	{r1}
+ 430:	4708      	bx	r1
+ 432:	680b      	ldr	r3, [r1, #0]
+ 434:	6003      	str	r3, [r0, #0]
+ 436:	684b      	ldr	r3, [r1, #4]
+ 438:	6043      	str	r3, [r0, #4]
+ 43a:	688b      	ldr	r3, [r1, #8]
+ 43c:	6083      	str	r3, [r0, #8]
+ 43e:	1c22      	adds	r2, r4, #0
+ 440:	68cb      	ldr	r3, [r1, #12]
+ 442:	3a10      	subs	r2, #16
+ 444:	60c3      	str	r3, [r0, #12]
+ 446:	3110      	adds	r1, #16
+ 448:	3010      	adds	r0, #16
+ 44a:	1c14      	adds	r4, r2, #0
+ 44c:	2a0f      	cmp	r2, #15
+ 44e:	d8f0      	bhi.n	432 <memcpy+0x2a>
+ 450:	e002      	b.n	458 <memcpy+0x50>
+ 452:	c908      	ldmia	r1!, {r3}
+ 454:	c008      	stmia	r0!, {r3}
+ 456:	3a04      	subs	r2, #4
+ 458:	2a03      	cmp	r2, #3
+ 45a:	d8fa      	bhi.n	452 <memcpy+0x4a>
+ 45c:	e7dd      	b.n	41a <memcpy+0x12>
+ 45e:	46c0      	nop			(mov r8, r8)
+ 460:	2009      	movs	r0, #9
+ 462:	6956      	ldr	r6, [r2, #20]
+ 464:	694d      	ldr	r5, [r1, #20]
+ 466:	7263      	strb	r3, [r4, #9]
+ 468:	536f      	strh	r7, [r5, r5]
+ 46a:	7379      	strb	r1, [r7, #13]
+ 46c:	6574      	str	r4, [r6, #84]
+ 46e:	736d      	strb	r5, [r5, #13]
+ 470:	5020      	str	r0, [r4, r0]
+ 472:	7476      	strb	r6, [r6, #17]
+ 474:	4c20      	ldr	r4, [pc, #128]	(4f8 <_edata+0x7c>)
+ 476:	6474      	str	r4, [r6, #68]
+ 478:	2009      	movs	r0, #9
+	...

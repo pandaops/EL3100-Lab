@@ -1,0 +1,93 @@
+   1              		.code	16
+   2              		.file	"main.c"
+  10              	.Ltext0:
+  11              		.section	.text.main,"ax",%progbits
+  12              		.align	2
+  13              		.global	main
+  14              		.code 16
+  15              		.thumb_func
+  17              	main:
+  18              	.LFB3:
+  19              		.file 1 "main.c"
+   1:main.c        **** #include "LPC23xx.h"
+   2:main.c        **** static void delay( unsigned int dv )
+   3:main.c        **** {
+   4:main.c        **** 	volatile unsigned cnt;
+   5:main.c        **** 	for ( cnt=0; cnt<dv ; cnt++ );	
+   6:main.c        **** }
+   7:main.c        **** /************************* main routine ***********************************************************
+   8:main.c        **** int main (void)
+   9:main.c        **** {
+  20              		.loc 1 9 0
+  21 0000 00B5     		push	{lr}
+  22              	.LCFI0:
+  10:main.c        **** 	PINSEL6 = 0X00000000;	
+  23              		.loc 1 10 0
+  24 0002 0C4B     		ldr	r3, .L10
+  25 0004 0021     		mov	r1, #0
+  26 0006 1960     		str	r1, [r3]
+  11:main.c        **** 	FIO3DIR = 0x05000000;
+  27              		.loc 1 11 0
+  28 0008 0B4A     		ldr	r2, .L10+4
+  29 000a A023     		mov	r3, #160
+  30 000c DB04     		lsl	r3, r3, #19
+  31 000e 1360     		str	r3, [r2]
+  12:main.c        ****         FIO4DIR = 0X00000000;
+  32              		.loc 1 12 0
+  33 0010 0A4B     		ldr	r3, .L10+8
+  13:main.c        ****     	int val;
+  14:main.c        ****     	init_timer( ((72000000/100) - 1 ));
+  34              		.loc 1 14 0
+  35 0012 0B48     		ldr	r0, .L10+12
+  36              		.loc 1 12 0
+  37 0014 1960     		str	r1, [r3]
+  38              		.loc 1 14 0
+  39 0016 FFF7FEFF 		bl	init_timer
+  40              	.L8:
+  15:main.c        **** 	while(1) 
+  16:main.c        **** 	{
+  17:main.c        **** 		val = (FIO4PIN&0X01);
+  41              		.loc 1 17 0
+  42 001a 0A4B     		ldr	r3, .L10+16
+  43 001c 1B68     		ldr	r3, [r3]
+  18:main.c        **** 		if(val==0)
+  44              		.loc 1 18 0
+  45 001e DA07     		lsl	r2, r3, #31
+  46 0020 03D4     		bmi	.L3
+  19:main.c        **** 			FIO3SET =0X0f000000;   // 9,6,5,a
+  47              		.loc 1 19 0
+  48 0022 F023     		mov	r3, #240
+  49 0024 084A     		ldr	r2, .L10+20
+  50 0026 1B05     		lsl	r3, r3, #20
+  51 0028 02E0     		b	.L9
+  52              	.L3:
+  20:main.c        **** 		else
+  21:main.c        **** 			FIO3CLR =0x0f000000;
+  53              		.loc 1 21 0
+  54 002a F023     		mov	r3, #240
+  55 002c 074A     		ldr	r2, .L10+24
+  56 002e 1B05     		lsl	r3, r3, #20
+  57              	.L9:
+  58 0030 1360     		str	r3, [r2]
+  59 0032 F2E7     		b	.L8
+  60              	.L11:
+  61              		.align	2
+  62              	.L10:
+  63 0034 18C002E0 		.word	-536690664
+  64 0038 60C0FF3F 		.word	1073725536
+  65 003c 80C0FF3F 		.word	1073725568
+  66 0040 7FFC0A00 		.word	719999
+  67 0044 94C0FF3F 		.word	1073725588
+  68 0048 78C0FF3F 		.word	1073725560
+  69 004c 7CC0FF3F 		.word	1073725564
+  70              	.LFE3:
+ 102              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/ccaUTKsu.s:1      .text:00000000 $t
+     /tmp/ccaUTKsu.s:17     .text.main:00000000 main
+     /tmp/ccaUTKsu.s:14     .text.main:00000000 $t
+     /tmp/ccaUTKsu.s:63     .text.main:00000034 $d
+
+UNDEFINED SYMBOLS
+init_timer

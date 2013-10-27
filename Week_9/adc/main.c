@@ -31,6 +31,9 @@ int  main ()
 	U0DLM = Fdiv / 256;
 	U0DLL = Fdiv % 256;
    	U0LCR = 0x03;               // DLAB = 0
+   	
+   	FIO4DIR=0x00;
+	FIO3DIR=0xFF;
 	
   	AD0CR = 0X01210F01; // Adc initialization
 	while(1) 
@@ -45,6 +48,7 @@ int  main ()
 		serial_tx(atoh(value&0x0f));
 		serial_tx(0x0d);
 		serial_tx(0x0a);
+		FIO3PIN=value&0x03f;
 	}
   return 0;
 }

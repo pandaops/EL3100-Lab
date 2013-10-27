@@ -1,0 +1,321 @@
+Archive member included because of file (symbol)
+
+/usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a(lib_a-memcpy.o)
+                              main.o (memcpy)
+
+Discarded input sections
+
+ .text          0x00000000        0x0 Startup.o
+ .data          0x00000000        0x0 Startup.o
+ .bss           0x00000000        0x0 Startup.o
+ .text          0x00000000        0x0 swi_handler.o
+ .data          0x00000000        0x0 swi_handler.o
+ .bss           0x00000000        0x0 swi_handler.o
+ .text          0x00000000        0x0 main.o
+ .data          0x00000000        0x0 main.o
+ .bss           0x00000000        0x0 main.o
+ .text.serial_rx
+                0x00000000        0x0 main.o
+ .text.serial_tx
+                0x00000000        0x0 main.o
+ .text          0x00000000        0x0 timer.o
+ .data          0x00000000        0x0 timer.o
+ .bss           0x00000000        0x0 timer.o
+ .text.enable_timer
+                0x00000000        0x0 timer.o
+ .text.disable_timer
+                0x00000000        0x0 timer.o
+ .text.reset_timer
+                0x00000000        0x0 timer.o
+ .data          0x00000000        0x0 /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a(lib_a-memcpy.o)
+ .bss           0x00000000        0x0 /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a(lib_a-memcpy.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+ROM              0x00000000         0x0007f000         xr
+RAM              0x40000000         0x00007fe0         rw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD Startup.o
+LOAD swi_handler.o
+LOAD main.o
+LOAD timer.o
+LOAD /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a
+LOAD /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libm.a
+LOAD /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a
+LOAD /usr/lib/gcc/arm-elf/4.2.0/thumb/interwork/libgcc.a
+START GROUP
+LOAD /usr/lib/gcc/arm-elf/4.2.0/thumb/interwork/libgcc.a
+LOAD /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libg.a
+LOAD /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a
+END GROUP
+
+.text           0x00000000      0x47c
+ *(.vectorg)
+ *(.RESET)
+ .RESET         0x00000000      0x164 Startup.o
+ *(.SWI_HANDLER)
+ .SWI_HANDLER   0x00000164       0x74 swi_handler.o
+                0x00000164                SoftwareInterrupt
+                0x000001d0                IntDisable
+                0x000001c8                IntEnable
+                0x000001d8                . = ALIGN (0x4)
+ *(.init)
+ *(.text .text.*)
+ .text.string_tx
+                0x000001d8       0x20 main.o
+                0x000001d8                string_tx
+ .text.main     0x000001f8       0x7c main.o
+                0x000001f8                main
+ .text.install_irq
+                0x00000274       0x40 timer.o
+                0x00000274                install_irq
+ .text.Timer0Handler
+                0x000002b4       0x24 timer.o
+                0x000002b4                Timer0Handler
+ .text.init_timer
+                0x000002d8       0x40 timer.o
+                0x000002d8                init_timer
+ .text.TargetResetInit
+                0x00000318       0xf0 timer.o
+                0x00000318                TargetResetInit
+ .text          0x00000408       0x58 /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a(lib_a-memcpy.o)
+                0x00000408                memcpy
+ *(.gnu.linkonce.t.*)
+ *(.glue_7)
+ .glue_7        0x00000460        0x0 Startup.o
+ .glue_7        0x00000460        0x0 swi_handler.o
+ .glue_7        0x00000460        0x0 main.o
+ .glue_7        0x00000460        0x0 timer.o
+ .glue_7        0x00000460        0x0 /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a(lib_a-memcpy.o)
+ *(.glue_7t)
+ .glue_7t       0x00000460        0x0 Startup.o
+ .glue_7t       0x00000460        0x0 swi_handler.o
+ .glue_7t       0x00000460        0x0 main.o
+ .glue_7t       0x00000460        0x0 timer.o
+ .glue_7t       0x00000460        0x0 /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a(lib_a-memcpy.o)
+ *(.gcc_except_table)
+ *(.rodata)
+ *(.rodata*)
+ .rodata.str1.4
+                0x00000460       0x1c main.o
+ *(.gnu.linkonce.r.*)
+                0x0000047c                . = ALIGN (0x4)
+                0x0000047c                . = ALIGN (0x4)
+
+.ctors          0x0000047c        0x0
+                0x0000047c                PROVIDE (__ctors_start__, .)
+ *(SORT(.ctors.*))
+ *(.ctors)
+                0x0000047c                . = ALIGN (0x4)
+                0x0000047c                PROVIDE (__ctors_end__, .)
+                0x0000047c                . = ALIGN (0x4)
+
+.dtors          0x0000047c        0x0
+                0x0000047c                PROVIDE (__dtors_start__, .)
+ *(SORT(.dtors.*))
+ *(.dtors)
+                0x0000047c                . = ALIGN (0x4)
+                0x0000047c                PROVIDE (__dtors_end__, .)
+                0x0000047c                . = ALIGN (0x4)
+                0x0000047c                . = ALIGN (0x4)
+                0x0000047c                _etext = .
+                0x0000047c                PROVIDE (etext, .)
+
+.data           0x40000000        0x0 load address 0x0000047c
+                0x40000000                _data = .
+ *(.vectmapped)
+                0x40000000                . = ALIGN (0x4)
+ *(.fastrun)
+                0x40000000                . = ALIGN (0x4)
+                0x40000000                . = ALIGN (0x4)
+ *(.data)
+ *(.data.*)
+ *(.gnu.linkonce.d*)
+                0x40000000                . = ALIGN (0x4)
+                0x40000000                . = ALIGN (0x4)
+                0x40000000                _edata = .
+                0x40000000                PROVIDE (edata, .)
+
+.bss            0x40000000        0x4
+                0x40000000                __bss_start = .
+                0x40000000                __bss_start__ = .
+ *(.bss)
+ *(.bss.*)
+ .bss.timer_counter
+                0x40000000        0x4 timer.o
+                0x40000000                timer_counter
+ *(.gnu.linkonce.b*)
+ *(COMMON)
+                0x40000004                . = ALIGN (0x4)
+                0x40000004                . = ALIGN (0x4)
+                0x40000004                __bss_end__ = .
+                0x40000004                PROVIDE (__bss_end, .)
+
+.stack          0x40000100      0x400
+ *(.stack)
+ *(.STACK)
+ .STACK         0x40000100      0x400 Startup.o
+                0x40000500                PROVIDE (_stack, .)
+                0x40000500                . = ALIGN (0x4)
+                0x40000500                _end = .
+                0x40000500                PROVIDE (end, .)
+
+.heap           0x40000500        0x0
+ *(.HEAP)
+ .HEAP          0x40000500        0x0 Startup.o
+                0x40000500                . = ALIGN (0x4)
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment        0x00000000       0xc9
+ *(.comment)
+ .comment       0x00000000       0x43 main.o
+ .comment       0x00000043       0x43 timer.o
+ .comment       0x00000086       0x43 /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a(lib_a-memcpy.o)
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x00000000       0xf8
+ *(.debug_aranges)
+ .debug_aranges
+                0x00000000       0x20 Startup.o
+ .debug_aranges
+                0x00000020       0x20 swi_handler.o
+ .debug_aranges
+                0x00000040       0x40 main.o
+ .debug_aranges
+                0x00000080       0x58 timer.o
+ .debug_aranges
+                0x000000d8       0x20 /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a(lib_a-memcpy.o)
+
+.debug_pubnames
+                0x00000000       0xfe
+ *(.debug_pubnames)
+ .debug_pubnames
+                0x00000000       0x45 main.o
+ .debug_pubnames
+                0x00000045       0x9c timer.o
+ .debug_pubnames
+                0x000000e1       0x1d /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a(lib_a-memcpy.o)
+
+.debug_info     0x00000000      0x499
+ *(.debug_info .gnu.linkonce.wi.*)
+ .debug_info    0x00000000       0x5f Startup.o
+ .debug_info    0x0000005f       0x63 swi_handler.o
+ .debug_info    0x000000c2      0x128 main.o
+ .debug_info    0x000001ea      0x1a3 timer.o
+ .debug_info    0x0000038d      0x10c /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a(lib_a-memcpy.o)
+
+.debug_abbrev   0x00000000      0x2c0
+ *(.debug_abbrev)
+ .debug_abbrev  0x00000000       0x14 Startup.o
+ .debug_abbrev  0x00000014       0x14 swi_handler.o
+ .debug_abbrev  0x00000028      0x11b main.o
+ .debug_abbrev  0x00000143       0xd5 timer.o
+ .debug_abbrev  0x00000218       0xa8 /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a(lib_a-memcpy.o)
+
+.debug_line     0x00000000      0x31a
+ *(.debug_line)
+ .debug_line    0x00000000       0x8a Startup.o
+ .debug_line    0x0000008a       0x5b swi_handler.o
+ .debug_line    0x000000e5       0x7b main.o
+ .debug_line    0x00000160       0xe7 timer.o
+ .debug_line    0x00000247       0xd3 /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a(lib_a-memcpy.o)
+
+.debug_frame    0x00000000      0x124
+ *(.debug_frame)
+ .debug_frame   0x00000000       0x58 main.o
+ .debug_frame   0x00000058       0xa0 timer.o
+ .debug_frame   0x000000f8       0x2c /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a(lib_a-memcpy.o)
+
+.debug_str      0x00000000      0x256
+ *(.debug_str)
+ .debug_str     0x00000000       0xbb main.o
+                                 0xc0 (size before relaxing)
+ .debug_str     0x000000bb       0xc4 timer.o
+                                0x142 (size before relaxing)
+ .debug_str     0x0000017f       0xd7 /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a(lib_a-memcpy.o)
+                                0x12b (size before relaxing)
+
+.debug_loc      0x00000000      0x269
+ *(.debug_loc)
+ .debug_loc     0x00000000       0x49 main.o
+ .debug_loc     0x00000049      0x119 timer.o
+ .debug_loc     0x00000162      0x107 /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a(lib_a-memcpy.o)
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+OUTPUT(main.elf elf32-littlearm)
+
+Cross Reference Table
+
+Symbol                                            File
+IntDisable                                        swi_handler.o
+IntEnable                                         swi_handler.o
+Reset_handler                                     Startup.o
+SoftwareInterrupt                                 swi_handler.o
+                                                  Startup.o
+TargetResetInit                                   timer.o
+                                                  Startup.o
+Timer0Handler                                     timer.o
+__bss_end__                                       Startup.o
+__bss_start__                                     Startup.o
+_data                                             Startup.o
+_edata                                            Startup.o
+_etext                                            Startup.o
+disable_timer                                     timer.o
+enable_timer                                      timer.o
+init_timer                                        timer.o
+                                                  main.o
+install_irq                                       timer.o
+main                                              main.o
+                                                  Startup.o
+memcpy                                            /usr/lib/gcc/arm-elf/4.2.0/../../../../arm-elf/lib/thumb/interwork/libc.a(lib_a-memcpy.o)
+                                                  main.o
+reset_timer                                       timer.o
+serial_rx                                         main.o
+serial_tx                                         main.o
+string_tx                                         main.o
+timer_counter                                     timer.o

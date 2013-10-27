@@ -1,0 +1,105 @@
+   1              		.code	16
+   2              		.file	"main.c"
+  10              	.Ltext0:
+  11              		.section	.text.main,"ax",%progbits
+  12              		.align	2
+  13              		.global	main
+  14              		.code 16
+  15              		.thumb_func
+  17              	main:
+  18              	.LFB2:
+  19              		.file 1 "main.c"
+   1:main.c        **** #include "LPC23xx.h"
+   2:main.c        **** int  main ()
+   3:main.c        **** {
+  20              		.loc 1 3 0
+  21 0000 00B5     		push	{lr}
+  22              	.LCFI0:
+   4:main.c        **** 	unsigned int i,value=0;
+   5:main.c        **** 	init_timer( ((72000000/100) - 1) );
+  23              		.loc 1 5 0
+  24 0002 1048     		ldr	r0, .L12
+  25 0004 FFF7FEFF 		bl	init_timer
+   6:main.c        **** 
+   7:main.c        **** 	PINSEL1 = 0x00200000; 		//Pinselection for uart tx and rx lines
+  26              		.loc 1 7 0
+  27 0008 0F4A     		ldr	r2, .L12+4
+  28 000a 8023     		mov	r3, #128
+  29 000c 9B03     		lsl	r3, r3, #14
+  30 000e 1360     		str	r3, [r2]
+   8:main.c        **** 	
+   9:main.c        **** 	/************** Uart initialization **********************************/
+  10:main.c        ****     PCLKSEL0 = 0x00C00000;
+  31              		.loc 1 10 0
+  32 0010 0E4A     		ldr	r2, .L12+8
+  33 0012 C023     		mov	r3, #192
+  34 0014 1B04     		lsl	r3, r3, #16
+  35 0016 1360     		str	r3, [r2]
+  11:main.c        ****     PINMODE1=0x00300000;
+  36              		.loc 1 11 0
+  37 0018 C023     		mov	r3, #192
+  38 001a 0D4A     		ldr	r2, .L12+12
+  39 001c 9B03     		lsl	r3, r3, #14
+  40 001e 0021     		mov	r1, #0
+  41              	.LVL0:
+  42 0020 1360     		str	r3, [r2]
+  43 0022 03E0     		b	.L11
+  44              	.L3:
+  12:main.c        ****   
+  13:main.c        **** 	while (1)
+  14:main.c        **** 	{
+  15:main.c        **** 	while(value<0x400)
+  16:main.c        **** 	{
+  17:main.c        ****    		DACR=value<<6;
+  45              		.loc 1 17 0
+  46 0024 0B4B     		ldr	r3, .L12+16
+  47 0026 8A01     		lsl	r2, r1, #6
+  48 0028 1A60     		str	r2, [r3]
+  18:main.c        ****    		value++;
+  49              		.loc 1 18 0
+  50 002a 0131     		add	r1, r1, #1
+  51              	.L11:
+  52              		.loc 1 15 0
+  53 002c 0A4B     		ldr	r3, .L12+20
+  54 002e 9942     		cmp	r1, r3
+  55 0030 F8D9     		bls	.L3
+  19:main.c        ****     } 
+  20:main.c        ****     value--;
+  56              		.loc 1 20 0
+  57 0032 0139     		sub	r1, r1, #1
+  58              	.L5:
+  21:main.c        ****     while(value>0)
+  22:main.c        ****     {
+  23:main.c        ****         DACR=value<<6;
+  59              		.loc 1 23 0
+  60 0034 074B     		ldr	r3, .L12+16
+  61 0036 8A01     		lsl	r2, r1, #6
+  24:main.c        ****         value--;   
+  62              		.loc 1 24 0
+  63 0038 0139     		sub	r1, r1, #1
+  64              		.loc 1 23 0
+  65 003a 1A60     		str	r2, [r3]
+  66              		.loc 1 21 0
+  67 003c 0029     		cmp	r1, #0
+  68 003e F5D0     		beq	.L11
+  69 0040 F8E7     		b	.L5
+  70              	.L13:
+  71 0042 0000     		.align	2
+  72              	.L12:
+  73 0044 7FFC0A00 		.word	719999
+  74 0048 04C002E0 		.word	-536690684
+  75 004c A8C11FE0 		.word	-534789720
+  76 0050 44C002E0 		.word	-536690620
+  77 0054 00C006E0 		.word	-536428544
+  78 0058 FF030000 		.word	1023
+  79              	.LFE2:
+ 111              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/cc3hy2PS.s:1      .text:00000000 $t
+     /tmp/cc3hy2PS.s:17     .text.main:00000000 main
+     /tmp/cc3hy2PS.s:14     .text.main:00000000 $t
+     /tmp/cc3hy2PS.s:73     .text.main:00000044 $d
+
+UNDEFINED SYMBOLS
+init_timer
